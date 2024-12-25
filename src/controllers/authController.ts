@@ -1,28 +1,30 @@
 import { Request, Response } from 'express';
 import { register, login } from '../services/authService';
 import { Logger } from '../utils/logger';
+import { ApiResponse } from '../utils/apiResponse';
 
-export const registerController = async (req: Request, res: Response) => {
+export const registerController = async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, password } = req.body;
         Logger.info(`Register request for email: ${email}`);
 
         const user = await register(email, password);
-        res.status(201).json({ message: 'User registered successfully', user: { id: user._id, email: user.email } });
+        ApiResponse.success(res, 'User registered successfully', { id: user._id, email: user.email }, 201);
     } catch (error: any) {
         Logger.error('Error in registerController', error);
-        res.status(400).json({ error: error.message });
+        ApiResponse.badRequest(res, error.message);
     }
 };
 
-export const loginController = async (req: Request, res: Response) => {
+export const loginController = async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, password } = req.body;
         Logger.info(`Login attempt for email: ${email}`);
+
         const token = await login(email, password);
-        res.status(200).json({ message: 'Login successful', token });
+        ApiResponse.success(res, 'Login successful', { token });
     } catch (error: any) {
         Logger.error('Error in loginController', error);
-        res.status(400).json({ error: error.message });
+        ApiResponse.unauthorized(res, error.message);
     }
 };
