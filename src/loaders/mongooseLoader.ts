@@ -3,7 +3,6 @@ import { dbConfig } from '../config/dbConfig';
 
 export const mongooseLoader = async (): Promise<void> => {
     try {
-        console.log(dbConfig.mongoUri)
         await mongoose.connect(dbConfig.mongoUri);
         console.log('Connected to MongoDB');
     } catch (error) {

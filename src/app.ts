@@ -1,16 +1,11 @@
-import express, { Application, Request, Response } from 'express';
+import express,  { Application } from 'express';
+import authRoutes from './routes/authRoutes';
 
 const app: Application = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Hello, World!');
-});
-
-app.get('/example', (req: Request, res: Response) => {
-    res.json({ message: 'This is an example route!' });
-});
+app.use('/api/auth', authRoutes);
 
 export default app;
