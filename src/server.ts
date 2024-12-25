@@ -1,7 +1,18 @@
-import app from './app';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const PORT = process.env.PORT || 3000;
+import { mongooseLoader } from './loaders/mongooseLoader';
+import { serverLoader } from './loaders/serverLoader';
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+const startServer = async (): Promise<void> => {
+    try {
+        await mongooseLoader();
+
+        serverLoader();
+    } catch (error) {
+        console.error('Error while starting the application:', error);
+        process.exit(1); 
+    }
+};
+
+startServer();
