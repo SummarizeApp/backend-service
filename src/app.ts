@@ -2,7 +2,7 @@ import express,  { Application } from 'express';
 import authRoutes from './routes/authRoutes';
 import caseRoutes from './routes/caseRoutes';
 
-import { apiLimiter } from './middlewares/rateLimiter';
+import { generalLimiter } from './middlewares/rateLimiter';
 import { errorHandler } from './middlewares/errorHandler';
 
 import swaggerUi from 'swagger-ui-express';
@@ -17,7 +17,7 @@ app.use(morgan('combined', { stream: { write: (message) => logger.info(message.t
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(apiLimiter);
+app.use(generalLimiter);
 
 // Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

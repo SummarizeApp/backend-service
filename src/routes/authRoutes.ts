@@ -5,6 +5,7 @@ import { ApiResponse } from '../utils/apiResponse';
 import { JwtPayload } from 'jsonwebtoken';
 import { registerSchema, loginSchema } from '../validators/authValidator';
 import { validate } from '../middlewares/validationMiddleware';
+import { authLimiter } from '../middlewares/rateLimiter';
 
 const router = Router();
 interface AuthRequest extends Request {
@@ -34,7 +35,7 @@ interface AuthRequest extends Request {
  *       400:
  *         description: Bad request
  */
-router.post('/register', validate(registerSchema), registerController);
+router.post('/register', authLimiter, validate(registerSchema), registerController);
 
 /**
  * @swagger
@@ -59,7 +60,7 @@ router.post('/register', validate(registerSchema), registerController);
  *       401:
  *         description: Unauthorized
  */
-router.post('/login', validate(loginSchema), loginController);
+router.post('/login', authLimiter, validate(loginSchema), loginController);
 
 /**
  * @swagger
@@ -82,7 +83,7 @@ router.post('/login', validate(loginSchema), loginController);
  *       401:
  *         description: Unauthorized
  */
-router.post('/refresh-token', refreshTokenController);
+router.post('/refresh-token', authLimiter, refreshTokenController);
 
 /**
  * @swagger
