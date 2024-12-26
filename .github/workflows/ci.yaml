@@ -18,6 +18,7 @@ jobs:
         node-version: '22.11.0'
 
     - name: Cache Node.js modules
+      id: cache-node-modules
       uses: actions/cache@v3
       with:
         path: ~/.npm
@@ -33,3 +34,19 @@ jobs:
 
     - name: Run tests
       run: npm test
+
+    - name: Display cache usage
+      if: steps.cache-node-modules.outputs.cache-hit == 'true'
+      run: echo "Cache hit for Node.js modules"
+    
+    - name: Display cache usage
+      if: steps.cache-node-modules.outputs.cache-hit != 'true'
+      run: echo "Cache miss for Node.js modules"
+
+    - name: Measure build time
+      run: |
+        start_time=$(date +%s)
+        npm run build
+        end_time=$(date +%s)
+        elapsed=$(( end_time - start_time ))
+        echo "Build time: $elapsed seconds"
