@@ -1,0 +1,9 @@
+2024-12-26T19:49:11.463Z [32minfo[39m: Starting the server...
+2024-12-26T19:49:11.465Z [32minfo[39m: Connecting to MongoDB...
+2024-12-26T19:49:13.134Z [32minfo[39m: Connected to MongoDB
+2024-12-26T19:49:13.137Z [32minfo[39m: Server running on http://localhost:3000
+2024-12-26T19:49:19.456Z [32minfo[39m: Register request for email: test6@gmail.com
+2024-12-26T19:49:19.458Z [32minfo[39m: Registering user with email: test6@gmail.com
+2024-12-26T19:49:19.838Z [32minfo[39m: User registered successfully with email: test6@gmail.com
+2024-12-26T19:49:21.499Z [32minfo[39m: Email sent to test6@gmail.com
+2024-12-26T19:49:21.507Z [32minfo[39m: ::1 - - [26/Dec/2024:19:49:21 +0000] "POST /api/auth/register HTTP/1.1" 201 511 "-" "PostmanRuntime/7.43.0"

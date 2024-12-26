@@ -1,6 +1,6 @@
 import { User, IUser } from '../models/userModel';
 import jwt from 'jsonwebtoken';
-import { Logger } from '../utils/logger';
+import logger from '../utils/logger';
 import { sendEmail } from './emailService';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
@@ -21,22 +21,22 @@ export const refreshTokens = async (refreshToken: string): Promise<{ accessToken
         }
         return generateTokens(user);
     } catch (error) {
-        Logger.error('Error refreshing tokens', error);
+        logger.error('Error refreshing tokens', error);
         throw new Error('Invalid refresh token');
     }
 };
 
 export const register = async (email: string, password: string): Promise<{ accessToken: string, refreshToken: string }> => {
-    Logger.info(`Registering user with email: ${email}`);
+    logger.info(`Registering user with email: ${email}`);
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-        Logger.warn(`Registration failed: Email already in use (${email})`);
+        logger.warn(`Registration failed: Email already in use (${email})`);
         throw new Error('Email already in use');
     }
     const user = new User({ email, password });
     await user.save();
-    Logger.info(`User registered successfully with email: ${email}`);
+    logger.info(`User registered successfully with email: ${email}`);
 
     await sendEmail(email, 'Welcome to Our Service', 'Thank you for registering!');
 
@@ -44,19 +44,19 @@ export const register = async (email: string, password: string): Promise<{ acces
 };
 
 export const login = async (email: string, password: string): Promise<{ accessToken: string, refreshToken: string }> => {
-    Logger.info(`Login attempt for email: ${email}`);
+    logger.info(`Login attempt for email: ${email}`);
     const user = await User.findOne({ email });
     if (!user) {
-        Logger.warn(`Login failed: Invalid email or password (${email})`);
+        logger.warn(`Login failed: Invalid email or password (${email})`);
         throw new Error('Invalid email or password');
     }
 
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
-        Logger.warn(`Login failed: Invalid password for email (${email})`);
+        logger.warn(`Login failed: Invalid password for email (${email})`);
         throw new Error('Invalid email or password');
     }
 
-    Logger.info(`Login successful for email: ${email}`);
+    logger.info(`Login successful for email: ${email}`);
     return generateTokens(user);
 };

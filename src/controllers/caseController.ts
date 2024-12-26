@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { createCaseWithFile, getFileFromS3 } from '../services/caseService';
 import { ApiResponse } from '../utils/apiResponse';
-import { Logger } from '../utils/logger';
+import logger from '../utils/logger';
 import { JwtPayload } from 'jsonwebtoken';
 
 interface AuthRequest extends Request {
@@ -26,7 +26,7 @@ export const createCaseWithFileController = async (req: AuthRequest, res: Respon
         const newCase = await createCaseWithFile(userId, title, description, file);
         ApiResponse.success(res, 'Case created and file uploaded successfully', newCase);
     } catch (error: any) {
-        Logger.error('Error in createCaseWithFileController', error);
+        logger.error('Error in createCaseWithFileController', error);
         ApiResponse.internalServerError(res, 'Error creating case and uploading file');
     }
 };
@@ -41,7 +41,7 @@ export const downloadFileController = async (req: AuthRequest, res: Response): P
         const fileStream = await getFileFromS3(caseId, fileName);
         fileStream.pipe(res);
     } catch (error: any) {
-        Logger.error('Error in downloadFileController', error);
+        logger.error('Error in downloadFileController', error);
         ApiResponse.internalServerError(res, 'Error downloading file');
     }
 };

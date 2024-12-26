@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { Logger } from '../utils/logger';
+import logger from '../utils/logger';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -22,10 +22,10 @@ export const sendEmail = async (to: string, subject: string, text: string): Prom
 
     try {
         await transporter.sendMail(mailOptions);
-        Logger.info(`Email sent to ${to}`);
+        logger.info(`Email sent to ${to}`);
     } catch (error) {
-        Logger.error('Error sending email', error);
-        Logger.error(`SMTP Configuration: ${JSON.stringify(transporter.options)}`);
+        logger.error('Error sending email', error);
+        logger.error(`SMTP Configuration: ${JSON.stringify(transporter.options)}`);
         throw error;
     }
 };

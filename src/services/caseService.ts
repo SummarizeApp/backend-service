@@ -1,7 +1,7 @@
 import s3 from '../config/awsConfig';
 import { Case, ICase } from '../models/caseModel';
 import { User } from '../models/userModel';
-import { Logger } from '../utils/logger';
+import logger from '../utils/logger';
 
 export const uploadFileToS3 = async (userId: string, caseId: string, file: Express.Multer.File): Promise<string> => {
     const params = {
@@ -14,7 +14,7 @@ export const uploadFileToS3 = async (userId: string, caseId: string, file: Expre
     return new Promise((resolve, reject) => {
         s3.upload(params, async (err: any, data: any) => {
             if (err) {
-                Logger.error('Error uploading file to S3', err);
+                logger.error('Error uploading file to S3', err);
                 reject('Error uploading file');
             } else {
                 const caseFile = await Case.findByIdAndUpdate(caseId, {

@@ -1,45 +1,22 @@
-import cliColor from 'cli-color';
+import { createLogger, format, transports } from 'winston';
 
-type LogLevel = 'info' | 'warn' | 'error' | 'debug';
+const { combine, timestamp, printf, colorize } = format;
 
-export class Logger {
-    private static colors = {
-        info: cliColor.blue,
-        warn: cliColor.yellow,
-        error: cliColor.red,
-        debug: cliColor.magenta,
-        timestamp: cliColor.blackBright,
-    };
+const logFormat = printf(({ level, message, timestamp }) => {
+    return `${timestamp} ${level}: ${message}`;
+});
 
-    private static log(level: LogLevel, message: string, meta?: unknown): void {
-        const timestamp = new Date().toISOString();
-        const color = this.colors[level];
-        const timestampColor = this.colors.timestamp;
+const logger = createLogger({
+    format: combine(
+        colorize(),
+        timestamp(),
+        logFormat
+    ),
+    transports: [
+        new transports.Console(),
+        new transports.File({ filename: 'logs/error.log', level: 'error' }),
+        new transports.File({ filename: 'logs/combined.log' })
+    ]
+});
 
-        const logMessage = `${timestampColor(`[${timestamp}]`)} ${color(`[${level.toUpperCase()}]:`)} ${message}`;
-
-        if (meta) {
-            console[level](logMessage, meta);
-        } else {
-            console[level](logMessage);
-        }
-    }
-
-    static info(message: string, meta?: unknown): void {
-        this.log('info', message, meta);
-    }
-
-    static warn(message: string, meta?: unknown): void {
-        this.log('warn', message, meta);
-    }
-
-    static error(message: string, meta?: unknown): void {
-        this.log('error', message, meta);
-    }
-
-    static debug(message: string, meta?: unknown): void {
-        if (process.env.NODE_ENV === 'development') {
-            this.log('debug', message, meta);
-        }
-    }
-}
+export default logger;

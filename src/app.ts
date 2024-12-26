@@ -8,7 +8,12 @@ import { errorHandler } from './middlewares/errorHandler';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swaggerConfig';
 
+import morgan from 'morgan';
+import logger from './utils/logger';
+
 const app: Application = express();
+
+app.use(morgan('combined', { stream: { write: (message) => logger.info(message.trim()) } }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
