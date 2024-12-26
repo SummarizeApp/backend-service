@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createCaseWithFile } from '../services/caseService';
+import { createCaseWithFile, getFileFromS3 } from '../services/caseService';
 import { ApiResponse } from '../utils/apiResponse';
 import { Logger } from '../utils/logger';
 import { JwtPayload } from 'jsonwebtoken';
