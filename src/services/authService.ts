@@ -1,6 +1,7 @@
 import { User, IUser } from '../models/userModel';
 import jwt from 'jsonwebtoken';
 import { Logger } from '../utils/logger';
+import { sendEmail } from './emailService';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your_jwt_refresh_secret_key';
@@ -36,6 +37,9 @@ export const register = async (email: string, password: string): Promise<{ acces
     const user = new User({ email, password });
     await user.save();
     Logger.info(`User registered successfully with email: ${email}`);
+
+    await sendEmail(email, 'Welcome to Our Service', 'Thank you for registering!');
+
     return generateTokens(user);
 };
 
