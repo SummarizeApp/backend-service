@@ -11,3 +11,12 @@
 2024-12-26T19:59:33.301Z [32minfo[39m: Connecting to MongoDB...
 2024-12-26T19:59:34.787Z [32minfo[39m: Connected to MongoDB
 2024-12-26T19:59:34.790Z [32minfo[39m: Server running on http://localhost:3000
+2024-12-26T20:12:03.249Z [32minfo[39m: Register request for email: test@example.com
+2024-12-26T20:12:03.258Z [32minfo[39m: Register request for email: test@example.com
+2024-12-26T20:12:03.267Z [31merror[39m: Error in registerController Registration error
+2024-12-26T20:12:03.272Z [32minfo[39m: Login attempt for email: test@example.com
+2024-12-26T20:12:03.275Z [32minfo[39m: Login attempt for email: test@example.com
+2024-12-26T20:12:03.277Z [31merror[39m: Error in loginController Login error
+2024-12-26T20:12:03.280Z [32minfo[39m: Refresh token request
+2024-12-26T20:12:03.284Z [32minfo[39m: Refresh token request
+2024-12-26T20:12:03.286Z [31merror[39m: Error in refreshTokenController Refresh error
