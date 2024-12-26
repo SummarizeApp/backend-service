@@ -30,3 +30,19 @@ export const createCaseWithFileController = async (req: AuthRequest, res: Respon
         ApiResponse.internalServerError(res, 'Error creating case and uploading file');
     }
 };
+
+export const downloadFileController = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+        if (!req.user) {
+            ApiResponse.unauthorized(res, 'User not authenticated');
+            return;
+        }
+        const { caseId, fileName } = req.params;
+        const fileStream = await getFileFromS3(caseId, fileName);
+        fileStream.pipe(res);
+    } catch (error: any) {
+        Logger.error('Error in downloadFileController', error);
+        ApiResponse.internalServerError(res, 'Error downloading file');
+    }
+};
+

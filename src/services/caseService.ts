@@ -47,3 +47,12 @@ export const createCaseWithFile = async (userId: string, title: string, descript
 
     return newCase;
 };
+
+export const getFileFromS3 = async (caseId: string, fileName: string): Promise<any> => {
+    const params = {
+        Bucket: process.env.AWS_S3_BUCKET_NAME || 'default-bucket-name',
+        Key: `cases/${caseId}/${fileName}`,
+    };
+
+    return s3.getObject(params).createReadStream();
+};
