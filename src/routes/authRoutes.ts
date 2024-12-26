@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { registerController, loginController } from '../controllers/authController';
+import { registerController, loginController, refreshTokenController } from '../controllers/authController';
 import { authenticate } from '../middlewares/authMiddleware';
 import { ApiResponse } from '../utils/apiResponse';
 import { JwtPayload } from 'jsonwebtoken';
@@ -11,6 +11,7 @@ interface AuthRequest extends Request {
 
 router.post('/register', registerController);
 router.post('/login', loginController);
+router.post('/refresh-token', refreshTokenController);
 
 router.get('/profile', authenticate, (req: AuthRequest, res: Response) => {
     const user = req.user; 
