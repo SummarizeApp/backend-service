@@ -1,104 +1,61 @@
-2024-12-26T19:49:11.463Z [32minfo[39m: Starting the server...
-2024-12-26T19:49:11.465Z [32minfo[39m: Connecting to MongoDB...
-2024-12-26T19:49:13.134Z [32minfo[39m: Connected to MongoDB
-2024-12-26T19:49:13.137Z [32minfo[39m: Server running on http://localhost:3000
-2024-12-26T19:49:19.456Z [32minfo[39m: Register request for email: test6@gmail.com
-2024-12-26T19:49:19.458Z [32minfo[39m: Registering user with email: test6@gmail.com
-2024-12-26T19:49:19.838Z [32minfo[39m: User registered successfully with email: test6@gmail.com
-2024-12-26T19:49:21.499Z [32minfo[39m: Email sent to test6@gmail.com
-2024-12-26T19:49:21.507Z [32minfo[39m: ::1 - - [26/Dec/2024:19:49:21 +0000] "POST /api/auth/register HTTP/1.1" 201 511 "-" "PostmanRuntime/7.43.0"
-2024-12-26T19:59:33.298Z [32minfo[39m: Starting the server...
-2024-12-26T19:59:33.301Z [32minfo[39m: Connecting to MongoDB...
-2024-12-26T19:59:34.787Z [32minfo[39m: Connected to MongoDB
-2024-12-26T19:59:34.790Z [32minfo[39m: Server running on http://localhost:3000
-2024-12-26T20:12:03.249Z [32minfo[39m: Register request for email: test@example.com
-2024-12-26T20:12:03.258Z [32minfo[39m: Register request for email: test@example.com
-2024-12-26T20:12:03.267Z [31merror[39m: Error in registerController Registration error
-2024-12-26T20:12:03.272Z [32minfo[39m: Login attempt for email: test@example.com
-2024-12-26T20:12:03.275Z [32minfo[39m: Login attempt for email: test@example.com
-2024-12-26T20:12:03.277Z [31merror[39m: Error in loginController Login error
-2024-12-26T20:12:03.280Z [32minfo[39m: Refresh token request
-2024-12-26T20:12:03.284Z [32minfo[39m: Refresh token request
-2024-12-26T20:12:03.286Z [31merror[39m: Error in refreshTokenController Refresh error
-2024-12-27T18:09:05.749Z [32minfo[39m: Starting the server...
-2024-12-27T18:09:05.752Z [32minfo[39m: Connecting to MongoDB...
-2024-12-27T18:09:07.441Z [32minfo[39m: Connected to MongoDB
-2024-12-27T18:09:07.445Z [32minfo[39m: Server running on http://localhost:3003
-2024-12-27T18:09:47.783Z [32minfo[39m: Starting the server...
-2024-12-27T18:09:47.786Z [32minfo[39m: Connecting to MongoDB...
-2024-12-27T18:09:49.329Z [32minfo[39m: Connected to MongoDB
-2024-12-27T18:09:49.332Z [32minfo[39m: Server running on http://localhost:3000
-2024-12-27T18:09:50.839Z [32minfo[39m: Login attempt for email: test1@gmail.com
-2024-12-27T18:09:50.841Z [32minfo[39m: Login attempt for email: test1@gmail.com
-2024-12-27T18:09:51.070Z [32minfo[39m: Login successful for email: test1@gmail.com
-2024-12-27T18:09:51.078Z [32minfo[39m: ::1 - - [27/Dec/2024:18:09:51 +0000] "POST /api/auth/login HTTP/1.1" 200 499 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:10:02.750Z [32minfo[39m: ::1 - - [27/Dec/2024:18:10:02 +0000] "POST /api/case HTTP/1.1" 404 148 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:10:24.241Z [32minfo[39m: ::1 - - [27/Dec/2024:18:10:24 +0000] "POST /api/cases HTTP/1.1" 400 74 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:10:33.190Z [32minfo[39m: ::1 - - [27/Dec/2024:18:10:33 +0000] "POST /api/cases HTTP/1.1" 401 91 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:10:38.947Z [32minfo[39m: ::1 - - [27/Dec/2024:18:10:38 +0000] "POST /api/cases HTTP/1.1" 400 74 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:11:43.734Z [32minfo[39m: ::1 - - [27/Dec/2024:18:11:43 +0000] "POST /api/cases HTTP/1.1" 400 69 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:11:59.123Z [32minfo[39m: ::1 - - [27/Dec/2024:18:11:59 +0000] "POST /api/cases HTTP/1.1" 500 98 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:12:28.812Z [32minfo[39m: Starting the server...
-2024-12-27T18:12:28.814Z [32minfo[39m: Connecting to MongoDB...
-2024-12-27T18:12:30.595Z [32minfo[39m: Connected to MongoDB
-2024-12-27T18:12:30.597Z [32minfo[39m: Server running on http://localhost:3000
-2024-12-27T18:14:49.223Z [32minfo[39m: Starting the server...
-2024-12-27T18:14:49.226Z [32minfo[39m: Connecting to MongoDB...
-2024-12-27T18:14:50.895Z [32minfo[39m: Connected to MongoDB
-2024-12-27T18:14:50.899Z [32minfo[39m: Server running on http://localhost:3000
-2024-12-27T18:20:10.246Z [32minfo[39m: Starting the server...
-2024-12-27T18:20:10.249Z [32minfo[39m: Connecting to MongoDB...
-2024-12-27T18:20:11.829Z [32minfo[39m: Connected to MongoDB
-2024-12-27T18:20:11.831Z [32minfo[39m: Server running on http://localhost:3000
-2024-12-27T18:20:33.179Z [32minfo[39m: ::1 - - [27/Dec/2024:18:20:33 +0000] "POST /api/cases HTTP/1.1" 200 417 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:20:47.601Z [32minfo[39m: ::1 - - [27/Dec/2024:18:20:47 +0000] "GET /api/auth/profile HTTP/1.1" 401 77 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:20:55.924Z [32minfo[39m: ::1 - - [27/Dec/2024:18:20:55 +0000] "GET /api/auth/profile HTTP/1.1" 200 172 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:25:03.327Z [32minfo[39m: Starting the server...
-2024-12-27T18:25:03.330Z [32minfo[39m: Connecting to MongoDB...
-2024-12-27T18:25:04.996Z [32minfo[39m: Connected to MongoDB
-2024-12-27T18:25:05.000Z [32minfo[39m: Server running on http://localhost:3000
-2024-12-27T18:25:15.233Z [32minfo[39m: ::1 - - [27/Dec/2024:18:25:15 +0000] "GET /api/cases HTTP/1.1" 401 77 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:25:26.251Z [32minfo[39m: ::1 - - [27/Dec/2024:18:25:26 +0000] "GET /api/cases HTTP/1.1" 401 77 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:25:27.492Z [32minfo[39m: ::1 - - [27/Dec/2024:18:25:27 +0000] "GET /api/cases HTTP/1.1" 401 77 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:25:37.360Z [32minfo[39m: ::1 - - [27/Dec/2024:18:25:37 +0000] "GET /api/cases HTTP/1.1" 401 77 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:25:40.705Z [32minfo[39m: Login attempt for email: test1@gmail.com
-2024-12-27T18:25:40.706Z [32minfo[39m: Login attempt for email: test1@gmail.com
-2024-12-27T18:25:40.932Z [32minfo[39m: Login successful for email: test1@gmail.com
-2024-12-27T18:25:40.937Z [32minfo[39m: ::1 - - [27/Dec/2024:18:25:40 +0000] "POST /api/auth/login HTTP/1.1" 200 499 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:25:46.268Z [32minfo[39m: ::1 - - [27/Dec/2024:18:25:46 +0000] "GET /api/cases HTTP/1.1" 200 520 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:26:13.500Z [32minfo[39m: ::1 - - [27/Dec/2024:18:26:13 +0000] "POST /api/cases HTTP/1.1" 401 77 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:26:21.611Z [32minfo[39m: ::1 - - [27/Dec/2024:18:26:21 +0000] "POST /api/cases HTTP/1.1" 200 438 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:26:24.930Z [32minfo[39m: ::1 - - [27/Dec/2024:18:26:24 +0000] "GET /api/cases HTTP/1.1" 200 1013 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:28:22.103Z [32minfo[39m: Starting the server...
-2024-12-27T18:28:22.106Z [32minfo[39m: Connecting to MongoDB...
-2024-12-27T18:28:23.771Z [32minfo[39m: Connected to MongoDB
-2024-12-27T18:28:23.774Z [32minfo[39m: Server running on http://localhost:3000
-2024-12-27T18:28:26.284Z [32minfo[39m: ::1 - - [27/Dec/2024:18:28:26 +0000] "POST /api/cases HTTP/1.1" 200 438 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:28:28.628Z [32minfo[39m: ::1 - - [27/Dec/2024:18:28:28 +0000] "GET /api/cases HTTP/1.1" 200 1372 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:48:56.575Z [32minfo[39m: Starting the server...
-2024-12-27T18:48:56.578Z [32minfo[39m: Connecting to MongoDB...
-2024-12-27T18:48:58.181Z [32minfo[39m: Connected to MongoDB
-2024-12-27T18:48:58.184Z [32minfo[39m: Server running on http://localhost:3000
-2024-12-27T18:49:02.041Z [32minfo[39m: ::1 - - [27/Dec/2024:18:49:02 +0000] "POST /api/cases HTTP/1.1" 401 77 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:49:07.226Z [32minfo[39m: Login attempt for email: test1@gmail.com
-2024-12-27T18:49:07.227Z [32minfo[39m: Login attempt for email: test1@gmail.com
-2024-12-27T18:49:07.465Z [32minfo[39m: Login successful for email: test1@gmail.com
-2024-12-27T18:49:07.468Z [32minfo[39m: ::1 - - [27/Dec/2024:18:49:07 +0000] "POST /api/auth/login HTTP/1.1" 200 499 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:49:14.184Z [32minfo[39m: ::1 - - [27/Dec/2024:18:49:14 +0000] "POST /api/cases HTTP/1.1" 200 2751 "-" "PostmanRuntime/7.43.0"
-2024-12-27T18:50:52.692Z [32minfo[39m: Starting the server...
-2024-12-27T18:50:52.695Z [32minfo[39m: Connecting to MongoDB...
-2024-12-27T18:50:54.283Z [32minfo[39m: Connected to MongoDB
-2024-12-27T18:50:54.285Z [32minfo[39m: Server running on http://localhost:3000
-2024-12-27T18:51:14.282Z [32minfo[39m: Starting the server...
-2024-12-27T18:51:14.285Z [32minfo[39m: Connecting to MongoDB...
-2024-12-27T18:51:15.925Z [32minfo[39m: Connected to MongoDB
-2024-12-27T18:51:15.928Z [32minfo[39m: Server running on http://localhost:3000
-2024-12-27T18:51:17.961Z [32minfo[39m: ::1 - - [27/Dec/2024:18:51:17 +0000] "POST /api/cases HTTP/1.1" 200 2709 "-" "PostmanRuntime/7.43.0"
-2024-12-27T19:10:43.835Z [32minfo[39m: Starting the server...
-2024-12-27T19:10:43.841Z [32minfo[39m: Connecting to MongoDB...
-2024-12-27T19:10:45.565Z [32minfo[39m: Connected to MongoDB
-2024-12-27T19:10:45.568Z [32minfo[39m: Server running on http://localhost:3000
-2024-12-27T19:10:46.792Z [32minfo[39m: Login attempt for email: test1@gmail.com
-2024-12-27T19:10:46.793Z [32minfo[39m: Login attempt for email: test1@gmail.com
-2024-12-27T19:10:47.151Z [32minfo[39m: Login successful for email: test1@gmail.com
-2024-12-27T19:10:47.171Z [32minfo[39m: ::ffff:172.18.0.1 - - [27/Dec/2024:19:10:47 +0000] "POST /api/auth/login HTTP/1.1" 200 499 "-" "PostmanRuntime/7.43.0"
+2024-12-27T19:31:00.519Z [32minfo[39m: Starting the server...
+2024-12-27T19:31:00.521Z [32minfo[39m: Connecting to MongoDB...
+2024-12-27T19:31:00.621Z [32minfo[39m: Connected to MongoDB
+2024-12-27T19:31:00.623Z [32minfo[39m: Server running on http://localhost:3000
+2024-12-27T19:31:05.449Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T19:31:05.451Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T19:31:05.761Z [32minfo[39m: Login successful for email: test1@gmail.com
+2024-12-27T19:31:05.775Z [32minfo[39m: ::ffff:172.18.0.1 - - [27/Dec/2024:19:31:05 +0000] "POST /api/auth/login HTTP/1.1" 200 499 "-" "PostmanRuntime/7.43.0"
+2024-12-27T19:31:08.868Z [32minfo[39m: ::ffff:172.18.0.2 - - [27/Dec/2024:19:31:08 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:31:23.880Z [32minfo[39m: ::ffff:172.18.0.2 - - [27/Dec/2024:19:31:23 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:31:36.996Z [32minfo[39m: ::ffff:172.18.0.2 - - [27/Dec/2024:19:31:36 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:33:43.975Z [32minfo[39m: Starting the server...
+2024-12-27T19:33:43.977Z [32minfo[39m: Connecting to MongoDB...
+2024-12-27T19:33:45.868Z [32minfo[39m: Connected to MongoDB
+2024-12-27T19:33:45.870Z [32minfo[39m: Server running on http://localhost:3000
+2024-12-27T19:33:53.928Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:33:53 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:34:08.922Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:34:08 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:34:22.108Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:34:22 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:34:37.110Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:34:37 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:34:50.185Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:34:50 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:35:05.188Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:35:05 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:35:18.291Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:35:18 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:35:33.290Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:35:33 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:35:46.395Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:35:46 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:36:01.396Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:36:01 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:36:14.431Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:36:14 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:36:29.446Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:36:29 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:36:42.554Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:36:42 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:36:57.540Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:36:57 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:37:10.599Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:37:10 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:37:25.597Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:37:25 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:37:38.685Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:37:38 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:37:53.678Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:37:53 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:38:06.975Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:38:06 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:38:21.978Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:38:21 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:38:35.038Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:38:35 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:38:50.020Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:38:50 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:39:03.183Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:39:03 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:39:17.186Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T19:39:17.186Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T19:39:17.469Z [32minfo[39m: Login successful for email: test1@gmail.com
+2024-12-27T19:39:17.477Z [32minfo[39m: ::ffff:172.18.0.1 - - [27/Dec/2024:19:39:17 +0000] "POST /api/auth/login HTTP/1.1" 200 499 "-" "PostmanRuntime/7.43.0"
+2024-12-27T19:39:18.044Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T19:39:18.044Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T19:39:18.186Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:39:18 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:39:18.299Z [32minfo[39m: Login successful for email: test1@gmail.com
+2024-12-27T19:39:18.304Z [32minfo[39m: ::ffff:172.18.0.1 - - [27/Dec/2024:19:39:18 +0000] "POST /api/auth/login HTTP/1.1" 200 499 "-" "PostmanRuntime/7.43.0"
+2024-12-27T19:39:19.356Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T19:39:19.357Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T19:39:19.611Z [32minfo[39m: Login successful for email: test1@gmail.com
+2024-12-27T19:39:19.615Z [32minfo[39m: ::ffff:172.18.0.1 - - [27/Dec/2024:19:39:19 +0000] "POST /api/auth/login HTTP/1.1" 200 499 "-" "PostmanRuntime/7.43.0"
+2024-12-27T19:39:20.305Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T19:39:20.305Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T19:39:20.562Z [32minfo[39m: Login successful for email: test1@gmail.com
+2024-12-27T19:39:20.567Z [32minfo[39m: ::ffff:172.18.0.1 - - [27/Dec/2024:19:39:20 +0000] "POST /api/auth/login HTTP/1.1" 200 499 "-" "PostmanRuntime/7.43.0"
+2024-12-27T19:39:21.373Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T19:39:21.373Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T19:39:21.623Z [32minfo[39m: Login successful for email: test1@gmail.com
+2024-12-27T19:39:21.628Z [32minfo[39m: ::ffff:172.18.0.1 - - [27/Dec/2024:19:39:21 +0000] "POST /api/auth/login HTTP/1.1" 200 499 "-" "PostmanRuntime/7.43.0"
+2024-12-27T19:39:31.241Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:39:31 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
+2024-12-27T19:39:46.247Z [32minfo[39m: ::ffff:172.18.0.5 - - [27/Dec/2024:19:39:46 +0000] "GET /metrics HTTP/1.1" 404 146 "-" "Prometheus/3.0.1"
