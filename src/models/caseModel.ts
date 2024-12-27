@@ -5,6 +5,7 @@ export interface ICase extends Document {
     title: string;
     description: string;
     files: string[];
+    textContent?: string;
 }
 
 const caseSchema: Schema = new Schema({
@@ -12,6 +13,7 @@ const caseSchema: Schema = new Schema({
     title: { type: String, required: true },
     description: { type: String, required: true },
     files: [{ type: String }],
+    textContent: { type: String },
 }, { timestamps: true });
 
 export const Case = mongoose.model<ICase>('Case', caseSchema);

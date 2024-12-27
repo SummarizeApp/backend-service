@@ -2,6 +2,7 @@ import s3 from '../config/awsConfig';
 import { Case, ICase } from '../models/caseModel';
 import { User } from '../models/userModel';
 import logger from '../utils/logger';
+import pdfParse from 'pdf-parse';
 
 export const uploadFileToS3 = async (userId: string, caseId: string, file: Express.Multer.File): Promise<string> => {
     const params = {
@@ -34,6 +35,10 @@ export const createCaseWithFile = async (userId: string, title: string, descript
     if (file) {
         const fileUrl = await uploadFileToS3(userId, newCase.id.toString(), file);
         newCase.files.push(fileUrl);
+
+        const pdfData = await pdfParse(file.buffer);
+        const cleanedText = cleanPdfText(pdfData.text);
+        newCase.textContent = cleanedText;
         await newCase.save();
     }
 
@@ -51,4 +56,12 @@ export const getFileFromS3 = async (caseId: string, fileName: string): Promise<a
 
 export const getCasesByUserId = async (userId: string): Promise<ICase[]> => {
     return Case.find({ userId });
+};
+
+const cleanPdfText = (text: string): string => {
+    // Gereksiz boşlukları ve yeni satır karakterlerini temizleyin
+    return text
+        .replace(/\n/g, ' ') // Yeni satır karakterlerini boşluk ile değiştir
+        .replace(/\s\s+/g, ' ') // Birden fazla boşluğu tek boşluk ile değiştir
+        .trim(); // Baş ve sondaki boşlukları temizle
 };
