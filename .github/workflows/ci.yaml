@@ -1,11 +1,12 @@
-name: CI 
+name: CI
 
-on: 
+on:
   push:
     branches:
       - main
+
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-24.04
 
     steps:
@@ -35,18 +36,30 @@ jobs:
     - name: Run tests
       run: npm test
 
-    - name: Display cache usage
-      if: steps.cache-node-modules.outputs.cache-hit == 'true'
-      run: echo "Cache hit for Node.js modules"
-    
-    - name: Display cache usage
-      if: steps.cache-node-modules.outputs.cache-hit != 'true'
-      run: echo "Cache miss for Node.js modules"
+  build-and-push:
+    runs-on: ubuntu-24.04
+    needs: build-and-test
 
-    - name: Measure build time
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.11.0'
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Extract short commit hash
+      id: vars
+      run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+    - name: Build and push Docker image
       run: |
-        start_time=$(date +%s)
-        npm run build
-        end_time=$(date +%s)
-        elapsed=$(( end_time - start_time ))
-        echo "Build time: $elapsed seconds"
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/my-app:${{ env.COMMIT_HASH }} .
+        docker push ${{ secrets.DOCKER_USERNAME }}/my-app:${{ env.COMMIT_HASH }}

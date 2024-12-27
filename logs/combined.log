@@ -94,3 +94,11 @@
 2024-12-27T18:51:15.925Z [32minfo[39m: Connected to MongoDB
 2024-12-27T18:51:15.928Z [32minfo[39m: Server running on http://localhost:3000
 2024-12-27T18:51:17.961Z [32minfo[39m: ::1 - - [27/Dec/2024:18:51:17 +0000] "POST /api/cases HTTP/1.1" 200 2709 "-" "PostmanRuntime/7.43.0"
+2024-12-27T19:10:43.835Z [32minfo[39m: Starting the server...
+2024-12-27T19:10:43.841Z [32minfo[39m: Connecting to MongoDB...
+2024-12-27T19:10:45.565Z [32minfo[39m: Connected to MongoDB
+2024-12-27T19:10:45.568Z [32minfo[39m: Server running on http://localhost:3000
+2024-12-27T19:10:46.792Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T19:10:46.793Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T19:10:47.151Z [32minfo[39m: Login successful for email: test1@gmail.com
+2024-12-27T19:10:47.171Z [32minfo[39m: ::ffff:172.18.0.1 - - [27/Dec/2024:19:10:47 +0000] "POST /api/auth/login HTTP/1.1" 200 499 "-" "PostmanRuntime/7.43.0"
