@@ -17,14 +17,6 @@ export const uploadFileToS3 = async (userId: string, caseId: string, file: Expre
                 logger.error('Error uploading file to S3', err);
                 reject('Error uploading file');
             } else {
-                const caseFile = await Case.findByIdAndUpdate(caseId, {
-                    $push: { files: data.Location },
-                });
-
-                if (!caseFile) {
-                    reject('Case not found');
-                }
-
                 resolve(data.Location);
             }
         });
@@ -55,4 +47,8 @@ export const getFileFromS3 = async (caseId: string, fileName: string): Promise<a
     };
 
     return s3.getObject(params).createReadStream();
+};
+
+export const getCasesByUserId = async (userId: string): Promise<ICase[]> => {
+    return Case.find({ userId });
 };

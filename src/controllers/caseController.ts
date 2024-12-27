@@ -1,8 +1,12 @@
 import { Request, Response } from 'express';
-import { createCaseWithFile, getFileFromS3 } from '../services/caseService';
 import { ApiResponse } from '../utils/apiResponse';
 import logger from '../utils/logger';
 import { JwtPayload } from 'jsonwebtoken';
+import { 
+    createCaseWithFile, 
+    getFileFromS3, 
+    getCasesByUserId 
+} from '../services/caseService';
 
 interface AuthRequest extends Request {
     user?: string | JwtPayload; 
@@ -46,3 +50,17 @@ export const downloadFileController = async (req: AuthRequest, res: Response): P
     }
 };
 
+export const getUserCasesController = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+        if (!req.user) {
+            ApiResponse.unauthorized(res, 'User not authenticated');
+            return;
+        }
+        const userId = (req.user as JwtPayload).id || req.user;
+        const cases = await getCasesByUserId(userId);
+        ApiResponse.success(res, 'User cases fetched successfully', cases);
+    } catch (error: any) {
+        logger.error('Error in getUserCasesController', error);
+        ApiResponse.internalServerError(res, 'Error fetching user cases');
+    }
+};

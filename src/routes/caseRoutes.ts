@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createCaseWithFileController, downloadFileController } from '../controllers/caseController';
+import { createCaseWithFileController, downloadFileController, getUserCasesController } from '../controllers/caseController';
 import upload from '../middlewares/uploadMiddleware';
 import { authenticate } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleware';
@@ -69,5 +69,22 @@ router.post('/cases', authenticate, upload.single('file'), validate(createCaseSc
  *         description: File not found
  */
 router.get('/cases/:caseId/files/:fileName', authenticate, downloadFileController);
+
+/**
+ * @swagger
+ * /cases:
+ *   get:
+ *     summary: Get all cases for the authenticated user
+ *     tags: [Cases]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User cases fetched successfully
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/cases', authenticate, getUserCasesController);
+
 
 export default router;

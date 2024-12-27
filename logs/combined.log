@@ -20,3 +20,58 @@
 2024-12-26T20:12:03.280Z [32minfo[39m: Refresh token request
 2024-12-26T20:12:03.284Z [32minfo[39m: Refresh token request
 2024-12-26T20:12:03.286Z [31merror[39m: Error in refreshTokenController Refresh error
+2024-12-27T18:09:05.749Z [32minfo[39m: Starting the server...
+2024-12-27T18:09:05.752Z [32minfo[39m: Connecting to MongoDB...
+2024-12-27T18:09:07.441Z [32minfo[39m: Connected to MongoDB
+2024-12-27T18:09:07.445Z [32minfo[39m: Server running on http://localhost:3003
+2024-12-27T18:09:47.783Z [32minfo[39m: Starting the server...
+2024-12-27T18:09:47.786Z [32minfo[39m: Connecting to MongoDB...
+2024-12-27T18:09:49.329Z [32minfo[39m: Connected to MongoDB
+2024-12-27T18:09:49.332Z [32minfo[39m: Server running on http://localhost:3000
+2024-12-27T18:09:50.839Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T18:09:50.841Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T18:09:51.070Z [32minfo[39m: Login successful for email: test1@gmail.com
+2024-12-27T18:09:51.078Z [32minfo[39m: ::1 - - [27/Dec/2024:18:09:51 +0000] "POST /api/auth/login HTTP/1.1" 200 499 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:10:02.750Z [32minfo[39m: ::1 - - [27/Dec/2024:18:10:02 +0000] "POST /api/case HTTP/1.1" 404 148 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:10:24.241Z [32minfo[39m: ::1 - - [27/Dec/2024:18:10:24 +0000] "POST /api/cases HTTP/1.1" 400 74 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:10:33.190Z [32minfo[39m: ::1 - - [27/Dec/2024:18:10:33 +0000] "POST /api/cases HTTP/1.1" 401 91 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:10:38.947Z [32minfo[39m: ::1 - - [27/Dec/2024:18:10:38 +0000] "POST /api/cases HTTP/1.1" 400 74 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:11:43.734Z [32minfo[39m: ::1 - - [27/Dec/2024:18:11:43 +0000] "POST /api/cases HTTP/1.1" 400 69 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:11:59.123Z [32minfo[39m: ::1 - - [27/Dec/2024:18:11:59 +0000] "POST /api/cases HTTP/1.1" 500 98 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:12:28.812Z [32minfo[39m: Starting the server...
+2024-12-27T18:12:28.814Z [32minfo[39m: Connecting to MongoDB...
+2024-12-27T18:12:30.595Z [32minfo[39m: Connected to MongoDB
+2024-12-27T18:12:30.597Z [32minfo[39m: Server running on http://localhost:3000
+2024-12-27T18:14:49.223Z [32minfo[39m: Starting the server...
+2024-12-27T18:14:49.226Z [32minfo[39m: Connecting to MongoDB...
+2024-12-27T18:14:50.895Z [32minfo[39m: Connected to MongoDB
+2024-12-27T18:14:50.899Z [32minfo[39m: Server running on http://localhost:3000
+2024-12-27T18:20:10.246Z [32minfo[39m: Starting the server...
+2024-12-27T18:20:10.249Z [32minfo[39m: Connecting to MongoDB...
+2024-12-27T18:20:11.829Z [32minfo[39m: Connected to MongoDB
+2024-12-27T18:20:11.831Z [32minfo[39m: Server running on http://localhost:3000
+2024-12-27T18:20:33.179Z [32minfo[39m: ::1 - - [27/Dec/2024:18:20:33 +0000] "POST /api/cases HTTP/1.1" 200 417 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:20:47.601Z [32minfo[39m: ::1 - - [27/Dec/2024:18:20:47 +0000] "GET /api/auth/profile HTTP/1.1" 401 77 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:20:55.924Z [32minfo[39m: ::1 - - [27/Dec/2024:18:20:55 +0000] "GET /api/auth/profile HTTP/1.1" 200 172 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:25:03.327Z [32minfo[39m: Starting the server...
+2024-12-27T18:25:03.330Z [32minfo[39m: Connecting to MongoDB...
+2024-12-27T18:25:04.996Z [32minfo[39m: Connected to MongoDB
+2024-12-27T18:25:05.000Z [32minfo[39m: Server running on http://localhost:3000
+2024-12-27T18:25:15.233Z [32minfo[39m: ::1 - - [27/Dec/2024:18:25:15 +0000] "GET /api/cases HTTP/1.1" 401 77 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:25:26.251Z [32minfo[39m: ::1 - - [27/Dec/2024:18:25:26 +0000] "GET /api/cases HTTP/1.1" 401 77 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:25:27.492Z [32minfo[39m: ::1 - - [27/Dec/2024:18:25:27 +0000] "GET /api/cases HTTP/1.1" 401 77 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:25:37.360Z [32minfo[39m: ::1 - - [27/Dec/2024:18:25:37 +0000] "GET /api/cases HTTP/1.1" 401 77 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:25:40.705Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T18:25:40.706Z [32minfo[39m: Login attempt for email: test1@gmail.com
+2024-12-27T18:25:40.932Z [32minfo[39m: Login successful for email: test1@gmail.com
+2024-12-27T18:25:40.937Z [32minfo[39m: ::1 - - [27/Dec/2024:18:25:40 +0000] "POST /api/auth/login HTTP/1.1" 200 499 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:25:46.268Z [32minfo[39m: ::1 - - [27/Dec/2024:18:25:46 +0000] "GET /api/cases HTTP/1.1" 200 520 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:26:13.500Z [32minfo[39m: ::1 - - [27/Dec/2024:18:26:13 +0000] "POST /api/cases HTTP/1.1" 401 77 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:26:21.611Z [32minfo[39m: ::1 - - [27/Dec/2024:18:26:21 +0000] "POST /api/cases HTTP/1.1" 200 438 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:26:24.930Z [32minfo[39m: ::1 - - [27/Dec/2024:18:26:24 +0000] "GET /api/cases HTTP/1.1" 200 1013 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:28:22.103Z [32minfo[39m: Starting the server...
+2024-12-27T18:28:22.106Z [32minfo[39m: Connecting to MongoDB...
+2024-12-27T18:28:23.771Z [32minfo[39m: Connected to MongoDB
+2024-12-27T18:28:23.774Z [32minfo[39m: Server running on http://localhost:3000
+2024-12-27T18:28:26.284Z [32minfo[39m: ::1 - - [27/Dec/2024:18:28:26 +0000] "POST /api/cases HTTP/1.1" 200 438 "-" "PostmanRuntime/7.43.0"
+2024-12-27T18:28:28.628Z [32minfo[39m: ::1 - - [27/Dec/2024:18:28:28 +0000] "GET /api/cases HTTP/1.1" 200 1372 "-" "PostmanRuntime/7.43.0"
