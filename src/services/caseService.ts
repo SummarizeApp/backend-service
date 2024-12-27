@@ -59,9 +59,8 @@ export const getCasesByUserId = async (userId: string): Promise<ICase[]> => {
 };
 
 const cleanPdfText = (text: string): string => {
-    // Gereksiz boşlukları ve yeni satır karakterlerini temizleyin
     return text
-        .replace(/\n/g, ' ') // Yeni satır karakterlerini boşluk ile değiştir
-        .replace(/\s\s+/g, ' ') // Birden fazla boşluğu tek boşluk ile değiştir
-        .trim(); // Baş ve sondaki boşlukları temizle
+        .replace(/\n/g, ' ') 
+        .replace(/\s\s+/g, ' ') 
+        .trim(); 
 };
