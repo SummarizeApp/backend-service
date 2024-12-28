@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 import logger from '../utils/logger';
 import { sendEmail } from './emailService';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your_jwt_refresh_secret_key';
+const JWT_SECRET = process.env.JWT_SECRET || 'jwt_secret_key';
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh_secret_key';
 
 export const generateTokens = (user: IUser) => {
     const accessToken = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '15m' });
