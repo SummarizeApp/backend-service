@@ -4,6 +4,7 @@ import caseRoutes from './routes/caseRoutes';
 
 import { generalLimiter } from './middlewares/rateLimiter';
 import { errorHandler } from './middlewares/errorHandler';
+import { metricsMiddleware, metricsEndpoint } from './middlewares/metricsMiddleware';
 
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swaggerConfig';
@@ -19,11 +20,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(generalLimiter);
 
+app.use(metricsMiddleware);
 // Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/auth', authRoutes);
 app.use('/api', caseRoutes);
+
+app.get('/metrics', metricsEndpoint);
 
 app.use(errorHandler);
 
