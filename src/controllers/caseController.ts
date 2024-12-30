@@ -7,6 +7,7 @@ import {
     getFileFromS3, 
     getCasesByUserId 
 } from '../services/caseService';
+import SummarizeClientService from '../services/summarizeClient';
 
 interface AuthRequest extends Request {
     user?: string | JwtPayload; 
@@ -28,7 +29,15 @@ export const createCaseWithFileController = async (req: AuthRequest, res: Respon
         }
 
         const newCase = await createCaseWithFile(userId, title, description, file);
-        ApiResponse.success(res, 'Case created and file uploaded successfully', newCase);
+        
+        const response = await SummarizeClientService.sendTextToFlask(newCase.textContent as string);
+        
+        if(response.status == "success"){
+            newCase.summary = response.summary;
+            await newCase.save();
+        }
+        
+        ApiResponse.success(res, 'Case created and file uploaded successfully', newCase, );
     } catch (error: any) {
         logger.error('Error in createCaseWithFileController', error);
         ApiResponse.internalServerError(res, 'Error creating case and uploading file');

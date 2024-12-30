@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/axios": "^0.9.36",
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/cli-color": "^2.0.6",
@@ -35,6 +36,7 @@
   "dependencies": {
     "@types/aws-sdk": "^0.0.42",
     "aws-sdk": "^2.1692.0",
+    "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
     "cli-color": "^2.0.4",
     "dotenv": "^16.4.7",
