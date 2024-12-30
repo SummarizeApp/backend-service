@@ -26,17 +26,29 @@ export const refreshTokens = async (refreshToken: string): Promise<{ accessToken
     }
 };
 
-export const register = async (email: string, password: string): Promise<{ accessToken: string, refreshToken: string }> => {
-    logger.info(`Registering user with email: ${email}`);
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+export const register = async (
+    email: string, 
+    password: string,
+    username: string,
+    connactNumber?: string
+): Promise<{ accessToken: string, refreshToken: string }> => {
+    logger.info(`Registering user with email: ${email}, username: ${username}, connactNumber: ${connactNumber}`);
+    
+    const existingUserByEmail = await User.findOne({ email });
+    if (existingUserByEmail) {
         logger.warn(`Registration failed: Email already in use (${email})`);
         throw new Error('Email already in use');
     }
-    const user = new User({ email, password });
+
+    const existingUserByUsername = await User.findOne({ username });
+    if (existingUserByUsername) {
+        logger.warn(`Registration failed: Username already in use (${username})`);
+        throw new Error('Username already in use');
+    }
+
+    const user = new User({ email, password, username, connactNumber });
     await user.save();
-    logger.info(`User registered successfully with email: ${email}`);
+    logger.info(`User registered successfully with email: ${email}, username: ${username}, connactNumber: ${connactNumber}`);
 
     await sendEmail(email, 'Welcome to Our Service', 'Thank you for registering!');
 

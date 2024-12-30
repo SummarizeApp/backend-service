@@ -27,13 +27,52 @@ interface AuthRequest extends Request {
  *             properties:
  *               email:
  *                 type: string
+ *                 example: user@example.com
  *               password:
  *                 type: string
+ *                 example: StrongPassword123
+ *               username:
+ *                 type: string
+ *                 example: john_doe
+ *               connactNumber:
+ *                 type: string
+ *                 example: +1234567890
  *     responses:
  *       201:
  *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: User registered successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     accessToken:
+ *                       type: string
+ *                       example: eyJhbGciOiJIUzI1NiIsInR...
+ *                     refreshToken:
+ *                       type: string
+ *                       example: dXNlcjEyM0Bkb21haW4uY29...
  *       400:
  *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Missing required fields
  */
 router.post('/register', authLimiter, validate(registerSchema), registerController);
 

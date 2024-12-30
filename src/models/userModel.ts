@@ -4,6 +4,8 @@ import bcrypt from 'bcryptjs';
 export interface IUser extends Document {
     email: string;
     password: string;
+    username: string;
+    connactNumber?: string;
     cases: mongoose.Types.ObjectId[];
     comparePassword(candidatePassword: string): Promise<boolean>;
 }
@@ -11,6 +13,8 @@ export interface IUser extends Document {
 const userSchema: Schema = new Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    username: { type: String, required: true, unique: true },
+    connactNumber: { type: String },
     cases: [{ type: mongoose.Types.ObjectId, ref: 'Case' }],
 }, { timestamps: true });
 
