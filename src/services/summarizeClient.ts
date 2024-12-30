@@ -4,8 +4,7 @@ class SummarizeClientService {
     private baseUrl: string;
 
     constructor() {
-        // Flask API URL'si
-        this.baseUrl = 'http://127.0.0.1:5000';
+        this.baseUrl = `http://${process.env.AI_SERVICE}:5000`;
     }
 
     public async sendTextToFlask(textContent: string): Promise<any> {

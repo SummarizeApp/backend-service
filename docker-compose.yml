@@ -17,6 +17,8 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_REGION=${AWS_REGION}
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+      - AI_SERVICE=ai
+
     volumes:
       - .:/app
       - /app/node_modules
@@ -48,6 +50,22 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/host:ro  
+  
+  ai:
+    build:
+      context: ../ai
+      dockerfile: Dockerfile
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
+    ports:
+      - "5000:5000"
+    command: "python3 app.py"
   
 volumes:
   grafana-storage:
