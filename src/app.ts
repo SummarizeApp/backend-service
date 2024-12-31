@@ -1,6 +1,7 @@
 import express,  { Application } from 'express';
 import authRoutes from './routes/authRoutes';
 import caseRoutes from './routes/caseRoutes';
+import userRoutes from './routes/userRoutes';
 
 import { generalLimiter } from './middlewares/rateLimiter';
 import { errorHandler } from './middlewares/errorHandler';
@@ -25,6 +26,7 @@ app.use(metricsMiddleware);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api', caseRoutes);
 
 app.get('/metrics', metricsEndpoint);
