@@ -51,6 +51,14 @@ services:
       - /sys:/host/sys:ro
       - /:/host:ro  
   
+  dcgm-exporter:
+    image: nvidia/dcgm-exporter:latest
+    runtime: nvidia
+    ports:
+      - "9400:9400"
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+
   ai:
     build:
       context: ../ai
@@ -66,6 +74,6 @@ services:
     ports:
       - "5000:5000"
     command: "python3 app.py"
-  
+
 volumes:
   grafana-storage:
