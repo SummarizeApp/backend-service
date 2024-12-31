@@ -75,5 +75,21 @@ services:
       - "5000:5000"
     command: "python3 app.py"
 
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    command: redis-server
+    volumes:
+      - redis-data:/data
+
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    ports:
+      - "9121:9121"
+    environment:
+      - REDIS_ADDR=redis:6379
+
 volumes:
   grafana-storage:
+  redis-data:
