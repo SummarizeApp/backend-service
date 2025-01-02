@@ -6,6 +6,8 @@ import { JwtPayload } from 'jsonwebtoken';
 import { registerSchema, loginSchema } from '../validators/authValidator';
 import { validate } from '../middlewares/validationMiddleware';
 import { authLimiter } from '../middlewares/rateLimiter';
+import { verifyOTPController } from '../controllers/otpController';
+import { resendOTPController } from '../controllers/otpController';
 
 const router = Router();
 interface AuthRequest extends Request {
@@ -140,5 +142,55 @@ router.get('/profile', authenticate, (req: AuthRequest, res: Response) => {
     const user = req.user; 
     ApiResponse.success(res, 'User profile fetched successfully', { user });
 });
+
+/**
+ * @swagger
+ * /auth/verify-otp:
+ *   post:
+ *     summary: Verify OTP
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *               otpCode:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: OTP verified successfully
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/verify-otp', verifyOTPController);
+
+/**
+ * @swagger
+ * /auth/resend-otp:
+ *   post:
+ *     summary: Resend OTP code
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: OTP code resent successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: User not found
+ */
+router.post('/resend-otp', resendOTPController);
 
 export default router;
