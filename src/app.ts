@@ -1,8 +1,5 @@
 import express,  { Application } from 'express';
-import authRoutes from './routes/authRoutes';
-import caseRoutes from './routes/caseRoutes';
-import userRoutes from './routes/userRoutes';
-
+import routes from './routes';
 import { generalLimiter } from './middlewares/rateLimiter';
 import { errorHandler } from './middlewares/errorHandler';
 import { metricsMiddleware, metricsEndpoint } from './middlewares/metricsMiddleware';
@@ -25,9 +22,7 @@ app.use(metricsMiddleware);
 // Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api', caseRoutes);
+app.use('/api', routes);
 
 app.get('/metrics', metricsEndpoint);
 

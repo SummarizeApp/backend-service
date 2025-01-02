@@ -28,7 +28,6 @@ export const loginController = async (req: Request, res: Response): Promise<void
 
         const result = await login(email, password);
 
-        // Eğer doğrulama gerekiyorsa
         if ('requiresVerification' in result) {
             ApiResponse.success(
                 res, 
@@ -39,7 +38,6 @@ export const loginController = async (req: Request, res: Response): Promise<void
             return;
         }
 
-        // Normal login başarılı
         ApiResponse.success(res, 'Login successful', result);
     } catch (error: any) {
         logger.error('Error in loginController', error);
