@@ -2,14 +2,20 @@ import { Request, Response } from 'express';
 import { register, login, refreshTokens } from '../services/authService';
 import logger from '../utils/logger';
 import { ApiResponse } from '../utils/apiResponse';
+import { generateOTP } from '../services/otpService';
 
 export const registerController = async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, password, username, connactNumber} = req.body;
-        logger.info(`Register request for email: ${email}, username: ${username}, connactNumber: ${connactNumber}`);
+        logger.info(`Register request for email: ${email}, username: ${username}`);
 
-        const tokens = await register(email, password, username, connactNumber);
-        ApiResponse.success(res, 'User registered successfully', tokens, 201);
+        // Sadece kullanıcıyı oluştur ve userId al
+        const { userId } = await register(email, password, username, connactNumber);
+        
+        // OTP oluştur ve email ile gönder
+        await generateOTP(userId, email);
+
+        ApiResponse.success(res, 'Registration successful. Please check your email for verification code.', { userId }, 201);
     } catch (error: any) {
         logger.error('Error in registerController', error);
         ApiResponse.badRequest(res, error.message);
@@ -22,8 +28,21 @@ export const loginController = async (req: Request, res: Response): Promise<void
         const { email, password } = req.body;
         logger.info(`Login attempt for email: ${email}`);
 
-        const tokens = await login(email, password);
-        ApiResponse.success(res, 'Login successful', tokens);
+        const result = await login(email, password);
+
+        // Eğer doğrulama gerekiyorsa
+        if ('requiresVerification' in result) {
+            ApiResponse.success(
+                res, 
+                'Please verify your email address. A new verification code has been sent to your email.',
+                { userId: result.userId, requiresVerification: true },
+                200
+            );
+            return;
+        }
+
+        // Normal login başarılı
+        ApiResponse.success(res, 'Login successful', result);
     } catch (error: any) {
         logger.error('Error in loginController', error);
         ApiResponse.unauthorized(res, error.message);
