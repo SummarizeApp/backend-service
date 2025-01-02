@@ -2,11 +2,13 @@ import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
+    _id: mongoose.Types.ObjectId;
     email: string;
     password: string;
     username: string;
     connactNumber?: string;
     cases: mongoose.Types.ObjectId[];
+    isVerified: boolean;
     comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -16,6 +18,10 @@ const userSchema: Schema = new Schema({
     username: { type: String, required: true, unique: true },
     connactNumber: { type: String },
     cases: [{ type: mongoose.Types.ObjectId, ref: 'Case' }],
+    isVerified: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true });
 
 userSchema.pre<IUser>('save', async function (next) {

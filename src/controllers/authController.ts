@@ -9,10 +9,8 @@ export const registerController = async (req: Request, res: Response): Promise<v
         const { email, password, username, connactNumber} = req.body;
         logger.info(`Register request for email: ${email}, username: ${username}`);
 
-        // Sadece kullanıcıyı oluştur ve userId al
         const { userId } = await register(email, password, username, connactNumber);
         
-        // OTP oluştur ve email ile gönder
         await generateOTP(userId, email);
 
         ApiResponse.success(res, 'Registration successful. Please check your email for verification code.', { userId }, 201);
