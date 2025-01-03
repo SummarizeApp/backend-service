@@ -61,7 +61,7 @@ services:
 
   ai:
     build:
-      context: ../ai
+      context: ../ai-service
       dockerfile: Dockerfile
     runtime: nvidia
     deploy:
