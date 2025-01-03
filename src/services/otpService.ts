@@ -2,7 +2,8 @@ import OTP from '../models/otpModel';
 import crypto from 'crypto';
 import { emailService } from './emailService';
 import logger from '../utils/logger';
-import { User } from '../models/userModel';
+import { IUser } from '../models/userModel';
+import mongoose from 'mongoose';
 
 export const generateOTP = async (userId: string, email: string): Promise<string> => {
     try {
@@ -37,21 +38,18 @@ export const verifyOTP = async (userId: string, otpCode: string): Promise<boolea
     }
 };
 
-export const resendOTP = async (email: string): Promise<void> => {
+export const resendOTP = async (userId: string | mongoose.Types.ObjectId, email: string): Promise<void> => {
     try {
-        const user = await User.findOne({ email });
-        
-        if (!user) {
-            throw new Error('User not found');
+
+        const existingOTPs = await OTP.find({ userId });
+        if (existingOTPs.length > 0) {
+            await OTP.deleteMany({ userId });
         }
 
-        if (user.isVerified) {
-            throw new Error('Email is already verified');
+        const newOTP = await generateOTP(userId.toString(), email);
+        if (!newOTP) {
+            throw new Error('Failed to generate new OTP');
         }
-
-        await OTP.deleteMany({ userId: user._id });
-
-        await generateOTP(user._id.toString(), email);
         
         logger.info(`OTP resent to ${email}`);
     } catch (error) {

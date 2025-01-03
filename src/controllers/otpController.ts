@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { verifyOTP } from '../services/otpService';
+import { verifyOTP, generateOTP, resendOTP } from '../services/otpService';
 import { verifyUserEmail } from '../services/authService';
 import { ApiResponse } from '../utils/apiResponse';
-import { resendOTP } from '../services/otpService';
+import { User } from '../models/userModel';
 import logger from '../utils/logger';
 
 export const verifyOTPController = async (req: Request, res: Response): Promise<void> => {
@@ -18,29 +18,37 @@ export const verifyOTPController = async (req: Request, res: Response): Promise<
         const tokens = await verifyUserEmail(userId);
         ApiResponse.success(res, 'Email verified successfully', tokens);
     } catch (error: any) {
+        logger.error('Error in verifyOTPController:', error);
         ApiResponse.internalServerError(res, 'Error verifying OTP');
     }
 };
 
 export const resendOTPController = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { email } = req.body;
+        const { userId } = req.body;
 
-        if (!email) {
-            ApiResponse.badRequest(res, 'Email is required');
+        if (!userId) {
+            ApiResponse.badRequest(res, 'User ID is required');
             return;
         }
 
-        await resendOTP(email);
+        const user = await User.findById(userId);
+        if (!user) {
+            ApiResponse.notFound(res, 'User not found');
+            return;
+        }
+
+        if (user.isVerified) {
+            ApiResponse.badRequest(res, 'Email is already verified');
+            return;
+        }
+
+
+        await resendOTP(user._id, user.email);
+        
         ApiResponse.success(res, 'OTP code has been resent to your email');
     } catch (error: any) {
         logger.error('Error in resendOTPController:', error);
-        if (error.message === 'User not found') {
-            ApiResponse.notFound(res, 'User not found');
-        } else if (error.message === 'Email is already verified') {
-            ApiResponse.badRequest(res, 'Email is already verified');
-        } else {
-            ApiResponse.internalServerError(res, 'Error resending OTP');
-        }
+        ApiResponse.internalServerError(res, 'Error resending OTP');
     }
 }; 
