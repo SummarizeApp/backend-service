@@ -70,7 +70,9 @@ export const getFileFromS3 = async (caseId: string, fileName: string): Promise<a
 };
 
 export const getCasesByUserId = async (userId: string): Promise<HydratedDocument<ICase>[]> => {
-    return Case.find({ userId });
+    return Case.find({ userId })
+        .select('+textContent +summary +fileUrl +summaryFileUrl')
+        .sort({ createdAt: -1 });
 };
 
 const cleanPdfText = (text: string): string => {
@@ -278,6 +280,6 @@ export const getCaseStats = async (userId: string) => {
 
 export async function getCases(userId: string) {
     return await Case.find({ userId })
-        .select('_id userId title description fileUrl textContent summary summaryFileUrl stats createdAt updatedAt')
+        .select('+textContent +summary +fileUrl +summaryFileUrl')
         .sort({ createdAt: -1 });
 }
