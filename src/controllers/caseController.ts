@@ -5,9 +5,11 @@ import { JwtPayload } from 'jsonwebtoken';
 import { 
     createCaseWithFile, 
     getFileFromS3, 
-    getCasesByUserId 
+    getCasesByUserId, 
+    saveSummaryWithPDF 
 } from '../services/caseService';
 import SummarizeClientService from '../services/summarizeClient';
+import { Case } from '../models/caseModel';
 
 interface AuthRequest extends Request {
     user?: string | JwtPayload; 
@@ -32,12 +34,16 @@ export const createCaseWithFileController = async (req: AuthRequest, res: Respon
         
         const response = await SummarizeClientService.sendTextToFlask(newCase.textContent as string);
         
-        if(response.status === "success"){
+        if(response.status === "success" && response.summary) {
+            await saveSummaryWithPDF(newCase._id.toString(), response.summary);
             newCase.summary = response.summary;
             await newCase.save();
+            
+            const updatedCase = await Case.findById(newCase._id);
+            ApiResponse.success(res, 'Case created and summarized successfully', updatedCase);
+        } else {
+            ApiResponse.success(res, 'Case created but summarization failed', newCase);
         }
-        
-        ApiResponse.success(res, 'Case created and file uploaded successfully', newCase);
     } catch (error: any) {
         logger.error('Error in createCaseWithFileController', error);
         ApiResponse.internalServerError(res, 'Error creating case and uploading file');
