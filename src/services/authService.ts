@@ -1,10 +1,10 @@
 import { User, IUser } from '../models/userModel';
 import jwt from 'jsonwebtoken';
 import logger from '../utils/logger';
-import { emailService } from './emailService';
 import OTP from '../models/otpModel';
 import { generateOTP } from './otpService';
 import { appConfig } from '../config/appConfig';
+import NotificationClient from './notificationClient';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'jwt_secret_key';
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh_secret_key';
@@ -65,7 +65,8 @@ export const verifyUserEmail = async (userId: string): Promise<{ accessToken: st
     user.isVerified = true;
     await user.save();
 
-    await emailService.sendWelcomeEmail(user.email, user.username);
+    const notificationClient = NotificationClient.getInstance();
+    await notificationClient.sendWelcomeEmail(user.email, user.username);
 
     return generateTokens(user);
 };
@@ -142,6 +143,9 @@ export const forgotPassword = async (userId: string): Promise<string> => {
         user.resetTokenExpires = new Date(Date.now() + 15 * 60 * 1000); 
         await user.save();
 
+        const notificationClient = NotificationClient.getInstance();
+        await notificationClient.sendPasswordResetEmail(user.email, resetToken);
+
         return resetToken;
     } catch (error) {
         throw error;
@@ -169,6 +173,28 @@ export const resetPassword = async (resetToken: string, newPassword: string): Pr
         await user.save();
 
     } catch (error) {
+        throw error;
+    }
+};
+
+export const sendPasswordResetEmail = async (email: string, resetToken: string): Promise<void> => {
+    try {
+        const notificationClient = NotificationClient.getInstance();
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+        await notificationClient.sendEmail({
+            to: email,
+            subject: 'Password Reset Request',
+            html: `
+                <h1>Password Reset Request</h1>
+                <p>Click the link below to reset your password:</p>
+                <a href="${resetLink}">${resetLink}</a>
+                <p>This link will expire in 1 hour.</p>
+                <p>If you didn't request this, please ignore this email.</p>
+            `
+        });
+    } catch (error) {
+        logger.error('Error sending password reset email:', error);
         throw error;
     }
 };
