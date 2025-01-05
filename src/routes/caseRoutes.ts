@@ -37,7 +37,7 @@ const router = Router();
  *       401:
  *         description: Unauthorized
  */
-router.post('/cases', authenticate, upload.single('file'), validate(createCaseSchema), createCaseWithFileController);
+router.post('/', authenticate, upload.single('file'), validate(createCaseSchema), createCaseWithFileController);
 
 /**
  * @swagger
@@ -68,7 +68,7 @@ router.post('/cases', authenticate, upload.single('file'), validate(createCaseSc
  *       404:
  *         description: File not found
  */
-router.get('/cases/:caseId/files/:fileName', authenticate, downloadFileController);
+router.get('/:caseId/files/:fileName', authenticate, downloadFileController);
 
 /**
  * @swagger
@@ -84,7 +84,7 @@ router.get('/cases/:caseId/files/:fileName', authenticate, downloadFileControlle
  *       401:
  *         description: Unauthorized
  */
-router.get('/cases', authenticate, getUserCasesController);
+router.get('/', authenticate, getUserCasesController);
 
 
 export default router;
