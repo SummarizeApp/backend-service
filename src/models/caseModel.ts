@@ -44,7 +44,8 @@ const CaseSchema: Schema = new Schema({
         type: String
     },
     summaryFileUrl: {
-        type: String
+        type: String,
+        select: true
     },
     stats: {
         originalLength: { type: Number, default: 0 },

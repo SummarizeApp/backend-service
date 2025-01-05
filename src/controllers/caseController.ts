@@ -41,10 +41,15 @@ export const createCaseWithFileController = async (req: AuthRequest, res: Respon
             newCase.summary = response.summary;
             await newCase.save();
             
-            const updatedCase = await Case.findById(newCase._id);
+            const updatedCase = await Case.findById(newCase._id)
+                .select('+textContent +summary +fileUrl +summaryFileUrl');
+            
             ApiResponse.success(res, 'Case created and summarized successfully', updatedCase);
         } else {
-            ApiResponse.success(res, 'Case created but summarization failed', newCase);
+            const caseWithUrls = await Case.findById(newCase._id)
+                .select('+textContent +summary +fileUrl +summaryFileUrl');
+                
+            ApiResponse.success(res, 'Case created but summarization failed', caseWithUrls);
         }
     } catch (error: any) {
         logger.error('Error in createCaseWithFileController', error);

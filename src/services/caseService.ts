@@ -135,30 +135,39 @@ const uploadSummaryToS3 = async (pdfBuffer: Buffer, caseId: string): Promise<str
 };
 
 export const saveSummaryWithPDF = async (caseId: string, summary: string): Promise<void> => {
-    const startTime = Date.now();
-    const caseDoc = await Case.findById(caseId);
-    
-    if (!caseDoc) {
-        throw new Error('Case not found');
-    }
-
-    const originalLength = caseDoc.textContent?.length || 0;
-    const summaryLength = summary.length;
-    const processingTime = Date.now() - startTime;
-    const compressionRatio = originalLength > 0 ? ((originalLength - summaryLength) / originalLength) * 100 : 0;
-
-    await Case.findByIdAndUpdate(caseId, {
-        summary,
-        stats: {
-            originalLength,
-            summaryLength,
-            compressionRatio,
-            processingTime,
-            createdAt: new Date()
+    try {
+        const startTime = Date.now();
+        const caseDoc = await Case.findById(caseId);
+        
+        if (!caseDoc) {
+            throw new Error('Case not found');
         }
-    });
 
-    await updateUserStats(caseDoc.userId.toString());
+        const originalLength = caseDoc.textContent?.length || 0;
+        const summaryLength = summary.length;
+        const processingTime = Date.now() - startTime;
+        const compressionRatio = originalLength > 0 ? ((originalLength - summaryLength) / originalLength) * 100 : 0;
+
+        const pdfBuffer = await createSummaryPDF(summary, caseId);
+        const summaryFileUrl = await uploadSummaryToS3(pdfBuffer, caseId);
+
+        await Case.findByIdAndUpdate(caseId, {
+            summary,
+            summaryFileUrl,
+            stats: {
+                originalLength,
+                summaryLength,
+                compressionRatio,
+                processingTime,
+                createdAt: new Date()
+            }
+        });
+
+        await updateUserStats(caseDoc.userId.toString());
+    } catch (error) {
+        logger.error('Error in saveSummaryWithPDF:', error);
+        throw error;
+    }
 };
 
 export const deleteCases = async (caseIds: string[], userId: string): Promise<{ 
@@ -266,3 +275,9 @@ export const getCaseStats = async (userId: string) => {
         monthly: monthlyStats
     };
 };
+
+export async function getCases(userId: string) {
+    return await Case.find({ userId })
+        .select('_id userId title description fileUrl textContent summary summaryFileUrl stats createdAt updatedAt')
+        .sort({ createdAt: -1 });
+}
