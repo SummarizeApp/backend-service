@@ -4,6 +4,7 @@ import logger from '../utils/logger';
 import { emailService } from './emailService';
 import OTP from '../models/otpModel';
 import { generateOTP } from './otpService';
+import { appConfig } from '../config/appConfig';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'jwt_secret_key';
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh_secret_key';
@@ -43,11 +44,12 @@ export const register = async (
 
     const user: IUser = new User({ 
         email, 
-        password, 
+        password,
         username, 
         connactNumber,
         isVerified: false
     });
+    
     await user.save();
     
     logger.info(`User registered successfully with email: ${email}`);
@@ -120,5 +122,53 @@ export const refreshTokens = async (refreshToken: string): Promise<{ accessToken
     } catch (error) {
         logger.error('Error refreshing tokens', error);
         throw new Error('Invalid refresh token');
+    }
+};
+
+export const forgotPassword = async (userId: string): Promise<string> => {
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        const resetToken = jwt.sign(
+            { userId: user._id },
+            appConfig.jwtSecret,
+            { expiresIn: '15m' }
+        );
+
+        user.resetToken = resetToken;
+        user.resetTokenExpires = new Date(Date.now() + 15 * 60 * 1000); 
+        await user.save();
+
+        return resetToken;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const resetPassword = async (resetToken: string, newPassword: string): Promise<void> => {
+    try {
+        const decoded = jwt.verify(resetToken, appConfig.jwtSecret) as { userId: string };
+        
+        const user = await User.findOne({
+            _id: decoded.userId,
+            resetToken,
+            resetTokenExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            throw new Error('Invalid or expired reset token');
+        }
+
+        user.password = newPassword;
+        user.resetToken = undefined;
+        user.resetTokenExpires = undefined;
+        
+        await user.save();
+
+    } catch (error) {
+        throw error;
     }
 };

@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { registerController, loginController, refreshTokenController } from '../controllers/authController';
+import { registerController, loginController, refreshTokenController, forgotPasswordController, verifyResetOTPController, resetPasswordController } from '../controllers/authController';
 import { authenticate } from '../middlewares/authMiddleware';
 import { ApiResponse } from '../utils/apiResponse';
 import { JwtPayload } from 'jsonwebtoken';
@@ -192,5 +192,78 @@ router.post('/verify-otp', verifyOTPController);
  *         description: User not found
  */
 router.post('/resend-otp', resendOTPController);
+
+/**
+ * @swagger
+ * /auth/forgot-password:
+ *   post:
+ *     summary: Request password reset
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password reset request sent
+ *       400:
+ *         description: Bad request
+ */
+router.post('/forgot-password', forgotPasswordController);
+
+/**
+ * @swagger
+ * /auth/verify-reset-otp:
+ *   post:
+ *     summary: Verify password reset OTP
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *               otpCode:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: OTP verified successfully
+ *       400:
+ *         description: Bad request
+ */
+router.post('/verify-reset-otp', verifyResetOTPController);
+
+/**
+ * @swagger
+ * /auth/reset-password:
+ *   post:
+ *     summary: Reset password
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               resetToken:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ *       400:
+ *         description: Bad request
+ */
+router.post('/reset-password/:resetToken', resetPasswordController);
 
 export default router;

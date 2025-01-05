@@ -9,6 +9,8 @@ export interface IUser extends Document {
     connactNumber?: string;
     cases: mongoose.Types.ObjectId[];
     isVerified: boolean;
+    resetToken?: string;
+    resetTokenExpires?: Date;
     comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -21,20 +23,31 @@ const userSchema: Schema = new Schema({
     isVerified: {
         type: Boolean,
         default: false
-    }
+    },
+    resetToken: String,
+    resetTokenExpires: Date
 }, { timestamps: true });
 
 userSchema.pre<IUser>('save', async function (next) {
     if (!this.isModified('password')) {
         return next();
     }
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
+
+    try {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (error: any) {
+        next(error);
+    }
 });
 
-userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
-    return bcrypt.compare(candidatePassword, this.password);
+userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+    try {
+        return await bcrypt.compare(candidatePassword, this.password);
+    } catch (error) {
+        throw error;
+    }
 };
 
 export const User = mongoose.model<IUser>('User', userSchema);
