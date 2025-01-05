@@ -6,6 +6,8 @@ import pdfParse from 'pdf-parse';
 import PDFDocument from 'pdfkit';
 import { HydratedDocument } from 'mongoose';
 import path from 'path';
+import mongoose from 'mongoose';
+import { updateUserStats } from './userService';
 
 export const uploadFileToS3 = async (userId: string, caseId: string, file: Express.Multer.File): Promise<string> => {
     const params = {
@@ -133,18 +135,30 @@ const uploadSummaryToS3 = async (pdfBuffer: Buffer, caseId: string): Promise<str
 };
 
 export const saveSummaryWithPDF = async (caseId: string, summary: string): Promise<void> => {
-    try {
-        const pdfBuffer = await createSummaryPDF(summary, caseId);
-        const summaryFileUrl = await uploadSummaryToS3(pdfBuffer, caseId);
-
-        await Case.findByIdAndUpdate(caseId, {
-            summary,
-            summaryFileUrl
-        });
-    } catch (error) {
-        logger.error('Error saving summary PDF:', error);
-        throw error;
+    const startTime = Date.now();
+    const caseDoc = await Case.findById(caseId);
+    
+    if (!caseDoc) {
+        throw new Error('Case not found');
     }
+
+    const originalLength = caseDoc.textContent?.length || 0;
+    const summaryLength = summary.length;
+    const processingTime = Date.now() - startTime;
+    const compressionRatio = originalLength > 0 ? ((originalLength - summaryLength) / originalLength) * 100 : 0;
+
+    await Case.findByIdAndUpdate(caseId, {
+        summary,
+        stats: {
+            originalLength,
+            summaryLength,
+            compressionRatio,
+            processingTime,
+            createdAt: new Date()
+        }
+    });
+
+    await updateUserStats(caseDoc.userId.toString());
 };
 
 export const deleteCases = async (caseIds: string[], userId: string): Promise<{ 
@@ -208,4 +222,47 @@ export const deleteCases = async (caseIds: string[], userId: string): Promise<{
     }
 
     return results;
+};
+
+export const getCaseStats = async (userId: string) => {
+    const stats = await Case.aggregate([
+        { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+        {
+            $group: {
+                _id: null,
+                totalCases: { $sum: 1 },
+                averageCompressionRatio: { $avg: '$stats.compressionRatio' },
+                averageProcessingTime: { $avg: '$stats.processingTime' },
+                totalOriginalLength: { $sum: '$stats.originalLength' },
+                totalSummaryLength: { $sum: '$stats.summaryLength' }
+            }
+        }
+    ]);
+
+    const monthlyStats = await Case.aggregate([
+        { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+        {
+            $group: {
+                _id: {
+                    year: { $year: '$createdAt' },
+                    month: { $month: '$createdAt' }
+                },
+                casesCount: { $sum: 1 },
+                averageCompressionRatio: { $avg: '$stats.compressionRatio' }
+            }
+        },
+        { $sort: { '_id.year': -1, '_id.month': -1 } },
+        { $limit: 12 }
+    ]);
+
+    return {
+        overall: stats[0] || {
+            totalCases: 0,
+            averageCompressionRatio: 0,
+            averageProcessingTime: 0,
+            totalOriginalLength: 0,
+            totalSummaryLength: 0
+        },
+        monthly: monthlyStats
+    };
 };

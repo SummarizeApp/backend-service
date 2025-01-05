@@ -11,6 +11,13 @@ export interface IUser extends Document {
     isVerified: boolean;
     resetToken?: string;
     resetTokenExpires?: Date;
+    stats: {
+        totalCases: number;
+        totalOriginalLength: number;
+        totalSummaryLength: number;
+        averageCompressionRatio: number;
+        lastUpdateDate: Date;
+    };
     comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -25,7 +32,14 @@ const userSchema: Schema = new Schema({
         default: false
     },
     resetToken: String,
-    resetTokenExpires: Date
+    resetTokenExpires: Date,
+    stats: {
+        totalCases: { type: Number, default: 0 },
+        totalOriginalLength: { type: Number, default: 0 },
+        totalSummaryLength: { type: Number, default: 0 },
+        averageCompressionRatio: { type: Number, default: 0 },
+        lastUpdateDate: { type: Date, default: Date.now }
+    }
 }, { timestamps: true });
 
 userSchema.pre<IUser>('save', async function (next) {

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createCaseWithFileController, downloadFileController, getUserCasesController, deleteCasesController } from '../controllers/caseController';
+import { createCaseWithFileController, downloadFileController, getUserCasesController, deleteCasesController, getCaseStatsController } from '../controllers/caseController';
 import upload from '../middlewares/uploadMiddleware';
 import { authenticate } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleware';
@@ -126,5 +126,21 @@ router.get('/', authenticate, getUserCasesController);
  *         description: One or more cases not found
  */
 router.post('/delete', authenticate, deleteCasesController);
+
+/**
+ * @swagger
+ * /cases/stats:
+ *   get:
+ *     summary: Get case statistics for the authenticated user
+ *     tags: [Cases]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Case statistics fetched successfully
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/stats', authenticate, getCaseStatsController);
 
 export default router;
