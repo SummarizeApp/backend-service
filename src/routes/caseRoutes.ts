@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createCaseWithFileController, downloadFileController, getUserCasesController } from '../controllers/caseController';
+import { createCaseWithFileController, downloadFileController, getUserCasesController, deleteCasesController } from '../controllers/caseController';
 import upload from '../middlewares/uploadMiddleware';
 import { authenticate } from '../middlewares/authMiddleware';
 import { validate } from '../middlewares/validationMiddleware';
@@ -86,5 +86,45 @@ router.get('/:caseId/files/:fileName', authenticate, downloadFileController);
  */
 router.get('/', authenticate, getUserCasesController);
 
+/**
+ * @swagger
+ * /cases/delete:
+ *   post:
+ *     summary: Delete one or multiple cases
+ *     tags: [Cases]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               caseIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 minItems: 1
+ *             required:
+ *               - caseIds
+ *           examples:
+ *             single:
+ *               value:
+ *                 caseIds: ["6457b8c7a2f2d3c3d4e5f6g7"]
+ *             multiple:
+ *               value:
+ *                 caseIds: ["6457b8c7a2f2d3c3d4e5f6g7", "7457b8c7a2f2d3c3d4e5f6g8"]
+ *     responses:
+ *       200:
+ *         description: Case(s) deleted successfully
+ *       400:
+ *         description: Invalid request body
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: One or more cases not found
+ */
+router.post('/delete', authenticate, deleteCasesController);
 
 export default router;

@@ -146,3 +146,66 @@ export const saveSummaryWithPDF = async (caseId: string, summary: string): Promi
         throw error;
     }
 };
+
+export const deleteCases = async (caseIds: string[], userId: string): Promise<{ 
+    success: string[], 
+    failed: string[] 
+}> => {
+    const results = {
+        success: [] as string[],
+        failed: [] as string[]
+    };
+
+    for (const caseId of caseIds) {
+        try {
+            const caseToDelete = await Case.findOne({ _id: caseId, userId });
+            
+            if (!caseToDelete) {
+                results.failed.push(caseId);
+                continue;
+            }
+
+            if (caseToDelete.fileUrl || caseToDelete.summaryFileUrl) {
+                try {
+                    const deletePromises = [];
+
+                    if (caseToDelete.fileUrl) {
+                        const fileKey = caseToDelete.fileUrl.split('.com/')[1];
+                        deletePromises.push(
+                            s3.deleteObject({
+                                Bucket: process.env.AWS_S3_BUCKET_NAME as string,
+                                Key: fileKey
+                            }).promise()
+                        );
+                    }
+
+                    if (caseToDelete.summaryFileUrl) {
+                        const summaryKey = caseToDelete.summaryFileUrl.split('.com/')[1];
+                        deletePromises.push(
+                            s3.deleteObject({
+                                Bucket: process.env.AWS_S3_BUCKET_NAME as string,
+                                Key: summaryKey
+                            }).promise()
+                        );
+                    }
+
+                    await Promise.all(deletePromises);
+                } catch (error) {
+                    logger.error('Error deleting files from S3:', error);
+                }
+            }
+
+            await User.findByIdAndUpdate(caseToDelete.userId, {
+                $pull: { cases: caseId }
+            });
+
+            await Case.findByIdAndDelete(caseId);
+            results.success.push(caseId);
+        } catch (error) {
+            logger.error(`Error deleting case ${caseId}:`, error);
+            results.failed.push(caseId);
+        }
+    }
+
+    return results;
+};

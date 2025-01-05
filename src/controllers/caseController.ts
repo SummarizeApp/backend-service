@@ -6,7 +6,8 @@ import {
     createCaseWithFile, 
     getFileFromS3, 
     getCasesByUserId, 
-    saveSummaryWithPDF 
+    saveSummaryWithPDF, 
+    deleteCases 
 } from '../services/caseService';
 import SummarizeClientService from '../services/summarizeClient';
 import { Case } from '../models/caseModel';
@@ -77,5 +78,32 @@ export const getUserCasesController = async (req: AuthRequest, res: Response): P
     } catch (error: any) {
         logger.error('Error in getUserCasesController', error);
         ApiResponse.internalServerError(res, 'Error fetching user cases');
+    }
+};
+
+export const deleteCasesController = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+        if (!req.user) {
+            ApiResponse.unauthorized(res, 'User not authenticated');
+            return;
+        }
+
+        const userId = (req.user as JwtPayload).id || req.user;
+        const { caseIds } = req.body;
+
+        if (!Array.isArray(caseIds) || !caseIds.length) {
+            ApiResponse.badRequest(res, 'caseIds must be a non-empty array');
+            return;
+        }
+
+        const results = await deleteCases(caseIds, userId);
+        
+        ApiResponse.success(res, 'Delete operation completed', {
+            successfulDeletes: results.success,
+            failedDeletes: results.failed
+        });
+    } catch (error: any) {
+        logger.error('Error in deleteCasesController:', error);
+        ApiResponse.internalServerError(res, 'Error deleting case(s)');
     }
 };
