@@ -100,7 +100,7 @@ services:
       - "4000:4000"
     environment:
       - NOTIFICATION_PORT=4000
-      - EMAIL_HOST=smtp.gmail.com
+      - EMAIL_HOST=smtp.etheral.email
       - EMAIL_PORT=587
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
