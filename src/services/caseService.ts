@@ -8,26 +8,7 @@ import { HydratedDocument } from 'mongoose';
 import path from 'path';
 import mongoose from 'mongoose';
 import { updateUserStats } from './userService';
-
-export const uploadFileToS3 = async (userId: string, caseId: string, file: Express.Multer.File): Promise<string> => {
-    const params = {
-        Bucket: process.env.AWS_S3_BUCKET_NAME || 'default-bucket-name',
-        Key: `cases/${userId}/${caseId}/${file.originalname}`,
-        Body: file.buffer,
-        ContentType: file.mimetype,
-    };
-
-    return new Promise((resolve, reject) => {
-        s3.upload(params, async (err: any, data: any) => {
-            if (err) {
-                logger.error('Error uploading file to S3', err);
-                reject('Error uploading file');
-            } else {
-                resolve(data.Location);
-            }
-        });
-    });
-};
+import { uploadFileToS3, uploadSummaryToS3 } from './s3Service';
 
 export const createCaseWithFile = async (
     userId: string, 
@@ -35,6 +16,7 @@ export const createCaseWithFile = async (
     description: string, 
     file: Express.Multer.File
 ): Promise<HydratedDocument<ICase>> => {
+    
     const fileUrl = await uploadFileToS3(userId, Date.now().toString(), file);
     
     const pdfData = await pdfParse(file.buffer);
@@ -55,19 +37,7 @@ export const createCaseWithFile = async (
     return newCase;
 };
 
-export const getFileFromS3 = async (caseId: string, fileName: string): Promise<any> => {
-    const caseDoc = await Case.findById(caseId);
-    if (!caseDoc) {
-        throw new Error('Case not found');
-    }
 
-    const params = {
-        Bucket: process.env.AWS_S3_BUCKET_NAME || 'default-bucket-name',
-        Key: caseDoc.fileUrl 
-    };
-
-    return s3.getObject(params).createReadStream();
-};
 
 export const getCasesByUserId = async (userId: string): Promise<HydratedDocument<ICase>[]> => {
     return Case.find({ userId })
@@ -123,18 +93,6 @@ const createSummaryPDF = async (summary: string, caseId: string): Promise<Buffer
     });
 };
 
-const uploadSummaryToS3 = async (pdfBuffer: Buffer, caseId: string): Promise<string> => {
-    const key = `summaries/${caseId}/summary.pdf`;
-    
-    await s3.upload({
-        Bucket: process.env.AWS_S3_BUCKET_NAME!,
-        Key: key,
-        Body: pdfBuffer,
-        ContentType: 'application/pdf'
-    }).promise();
-
-    return `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
-};
 
 export const saveSummaryWithPDF = async (caseId: string, summary: string): Promise<void> => {
     try {
