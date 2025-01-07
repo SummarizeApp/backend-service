@@ -10,10 +10,8 @@ export const generateOTP = async (userId: string, email: string): Promise<void> 
     try {
         const otpCode = generateRandomCode();
         
-        // Redis'e OTP'yi kaydet
         await redis.setex(`otp:${userId}`, OTP_EXPIRY, otpCode);
         
-        // Email gönder
         const notificationClient = NotificationClient.getInstance();
         await notificationClient.sendOTPEmail(email, otpCode);
 
@@ -49,11 +47,20 @@ export const verifyOTP = async (userId: string, otpCode: string): Promise<boolea
 
 export const resendOTP = async (userId: string, email: string): Promise<void> => {
     try {
-        // Eski OTP'yi sil
-        await redis.del(`otp:${userId}`);
+        // Önce eski OTP'nin silindiğinden emin olalım
+        const key = `otp:${userId}`;
+        const deleted = await redis.del(key);
         
+        if (deleted === 0) {
+            logger.warn(`No existing OTP found for userId: ${userId}`);
+        } else {
+            logger.info(`Existing OTP deleted for userId: ${userId}`);
+        }
+
         // Yeni OTP oluştur ve gönder
         await generateOTP(userId, email);
+        
+        logger.info(`New OTP generated and sent for userId: ${userId}`);
     } catch (error) {
         logger.error('Error in resendOTP:', error);
         throw new Error('Failed to resend OTP');
