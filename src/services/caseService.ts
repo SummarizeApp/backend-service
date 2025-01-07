@@ -8,7 +8,8 @@ import { HydratedDocument } from 'mongoose';
 import path from 'path';
 import mongoose from 'mongoose';
 import { updateUserStats } from './userService';
-import { RedisService } from './redisService';
+import RedisService from './redisService';
+
 
 export const uploadFileToS3 = async (userId: string, caseId: string, file: Express.Multer.File): Promise<string> => {
     const params = {

@@ -44,7 +44,7 @@ export const resendOTPController = async (req: Request, res: Response): Promise<
         }
 
 
-        await resendOTP(user._id, user.email);
+        await resendOTP(user._id.toString(), user.email);
         
         ApiResponse.success(res, 'OTP code has been resent to your email');
     } catch (error: any) {

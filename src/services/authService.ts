@@ -1,10 +1,10 @@
 import { User, IUser } from '../models/userModel';
 import jwt from 'jsonwebtoken';
 import logger from '../utils/logger';
-import OTP from '../models/otpModel';
 import { generateOTP } from './otpService';
 import { appConfig } from '../config/appConfig';
 import NotificationClient from './notificationClient';
+import RedisService from './redisService';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'jwt_secret_key';
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh_secret_key';
@@ -38,7 +38,8 @@ export const register = async (
 
     if (unverifiedUser) {
         logger.info(`Found unverified user, deleting old registration: ${email}`);
-        await OTP.deleteMany({ userId: unverifiedUser._id });
+        const redis = RedisService.getInstance();
+        await redis.del(`otp:${unverifiedUser._id}`);
         await unverifiedUser.deleteOne();
     }
 

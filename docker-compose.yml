@@ -18,11 +18,16 @@ services:
       - AWS_REGION=${AWS_REGION}
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
       - AI_SERVICE=ai
-
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=your_redis_password
     volumes:
       - .:/app
       - /app/node_modules
     command: npm run dev
+    depends_on:
+      - redis
+      - rabbitmq
 
   prometheus:
     image: prom/prometheus:latest
@@ -79,11 +84,7 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
-    command: redis-server --appendonly yes
-    volumes:
-      - redis-data:/data
-    networks:
-      - app-network
+    command: redis-server --requirepass your_redis_password
 
   redis-exporter:
     image: oliver006/redis_exporter:latest
@@ -91,13 +92,49 @@ services:
       - "9121:9121"
     environment:
       - REDIS_ADDR=redis:6379
-    networks:
-      - app-network
+      - REDIS_PASSWORD=your_redis_password
+    depends_on:
+      - redis
+
+  notification-service:
+    build:
+      context: ../notification-service
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - NOTIFICATION_PORT=4000
+      - EMAIL_HOST=smtp.gmail.com
+      - EMAIL_PORT=587
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5 
 
 volumes:
   grafana-storage:
-  redis-data:
-    driver: local
+  rabbitmq_data:
+
 
 networks:
   app-network:
