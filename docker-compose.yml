@@ -18,15 +18,12 @@ services:
       - AWS_REGION=${AWS_REGION}
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
       - AI_SERVICE=ai
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=your_redis_password
+      - RABBITMQ_URL=amqp://guest:configured@rabbitmq:5672/
     volumes:
       - .:/app
       - /app/node_modules
     command: npm run dev
     depends_on:
-      - redis
       - rabbitmq
 
   prometheus:
@@ -35,6 +32,7 @@ services:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
+      
 
   grafana:
     image: grafana/grafana:latest
@@ -84,7 +82,9 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
-    command: redis-server --requirepass your_redis_password
+    command: redis-server
+    volumes:
+      - redis-data:/data
 
   redis-exporter:
     image: oliver006/redis_exporter:latest
@@ -92,9 +92,6 @@ services:
       - "9121:9121"
     environment:
       - REDIS_ADDR=redis:6379
-      - REDIS_PASSWORD=your_redis_password
-    depends_on:
-      - redis
 
   notification-service:
     build:
@@ -104,11 +101,11 @@ services:
       - "4000:4000"
     environment:
       - NOTIFICATION_PORT=4000
-      - EMAIL_HOST=smtp.gmail.com
+      - EMAIL_HOST=smtp.etheral.email
       - EMAIL_PORT=587
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
-      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - RABBITMQ_URL=amqp://guest:configured@rabbitmq:5672/
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -123,19 +120,19 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+      - "5552:5552"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq-data:/var/lib/rabbitmq
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 10s
       timeout: 5s
-      retries: 5 
+      retries: 5
 
 volumes:
   grafana-storage:
-  rabbitmq_data:
-
-
-networks:
-  app-network:
-    driver: bridge
+  redis-data:
+  rabbitmq-data:
