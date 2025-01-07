@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { verifyOTP, generateOTP, resendOTP } from '../services/otpService';
+import { verifyOTP, resendOTP } from '../services/otpService';
 import { verifyUserEmail } from '../services/authService';
 import { ApiResponse } from '../utils/apiResponse';
 import { User } from '../models/userModel';
