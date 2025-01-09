@@ -12,7 +12,15 @@ import logger from './utils/logger';
 
 const app: Application = express();
 
-app.use(morgan('combined', { stream: { write: (message) => logger.info(message.trim()) } }));
+app.use(morgan('combined', {
+    stream: {
+        write: (message) => {
+            if (!message.includes('GET /metrics')) {
+                logger.info(message.trim());
+            }
+        }
+    }
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
