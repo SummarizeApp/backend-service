@@ -8,10 +8,10 @@ import {
     saveSummaryWithPDF, 
     deleteCases, 
     getCaseStats, 
-    getFileFromS3
 } from '../services/caseService';
 import SummarizeClientService from '../services/summarizeClient';
 import { Case } from '../models/caseModel';
+import { S3Service } from '../services/s3Service'; 
 
 interface AuthRequest extends Request {
     user?: string | JwtPayload; 
@@ -64,7 +64,7 @@ export const downloadFileController = async (req: AuthRequest, res: Response): P
             return;
         }
         const { caseId, fileName } = req.params;
-        const fileStream = await getFileFromS3(caseId, fileName);
+        const fileStream = await S3Service.getFile(caseId, fileName);
         fileStream.pipe(res);
     } catch (error: any) {
         logger.error('Error in downloadFileController', error);

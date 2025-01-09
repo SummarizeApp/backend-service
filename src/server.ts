@@ -1,6 +1,6 @@
-import app from './app';
 import { mongooseLoader } from './loaders/mongooseLoader';
 import { redisLoader } from './loaders/redisLoader';
+import { serverLoader } from './loaders/serverLoader';
 import logger from './utils/logger';
 
 const startServer = async () => {
@@ -8,11 +8,7 @@ const startServer = async () => {
         await mongooseLoader();
         await redisLoader();
 
-        const port = process.env.PORT || 3000;
-        
-        app.listen(port, () => {
-            logger.info(`Server is running on port ${port}`);
-        });
+        await serverLoader();
     } catch (error) {
         logger.error('Failed to start server:', error);
         process.exit(1);
