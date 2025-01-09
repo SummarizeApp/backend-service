@@ -34,7 +34,7 @@ export const createCaseWithFileController = async (req: AuthRequest, res: Respon
 
         const newCase = await createCaseWithFile(userId, title, description, file);
         
-        const response = await SummarizeClientService.sendTextToFlask(newCase.textContent as string);
+        const response = await SummarizeClientService.getSummary(newCase.textContent as string);
         
         if(response.status === "success" && response.summary) {
             await saveSummaryWithPDF(newCase._id.toString(), response.summary);
