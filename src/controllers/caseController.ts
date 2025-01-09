@@ -4,11 +4,11 @@ import logger from '../utils/logger';
 import { JwtPayload } from 'jsonwebtoken';
 import { 
     createCaseWithFile, 
-    getFileFromS3, 
     getCasesByUserId, 
     saveSummaryWithPDF, 
     deleteCases, 
-    getCaseStats 
+    getCaseStats, 
+    getFileFromS3
 } from '../services/caseService';
 import SummarizeClientService from '../services/summarizeClient';
 import { Case } from '../models/caseModel';

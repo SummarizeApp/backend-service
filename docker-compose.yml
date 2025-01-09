@@ -18,7 +18,7 @@ services:
       - AWS_REGION=${AWS_REGION}
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
       - AI_SERVICE=ai
-      - RABBITMQ_URL=amqp://guest:configured@rabbitmq:5672/
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
     volumes:
       - .:/app
       - /app/node_modules
@@ -105,7 +105,7 @@ services:
       - EMAIL_PORT=587
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
-      - RABBITMQ_URL=amqp://guest:configured@rabbitmq:5672/
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
     depends_on:
       rabbitmq:
         condition: service_healthy

@@ -47,7 +47,7 @@ export const verifyOTP = async (userId: string, otpCode: string): Promise<boolea
 
 export const resendOTP = async (userId: string, email: string): Promise<void> => {
     try {
-        // Önce eski OTP'nin silindiğinden emin olalım
+
         const key = `otp:${userId}`;
         const deleted = await redis.del(key);
         

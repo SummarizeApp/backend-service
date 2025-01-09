@@ -42,6 +42,12 @@ const userSchema: Schema = new Schema({
     }
 }, { timestamps: true });
 
+//Indexes
+userSchema.index({ resetToken: 1 }, { sparse: true }); 
+userSchema.index({ resetTokenExpires: 1 }, { sparse: true, expireAfterSeconds: 0 });
+userSchema.index({ isVerified: 1 }); 
+userSchema.index({ email: 1, username: 1 }); 
+
 userSchema.pre<IUser>('save', async function (next) {
     if (!this.isModified('password')) {
         return next();

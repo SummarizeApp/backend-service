@@ -2,14 +2,11 @@ import { Case, ICase } from '../models/caseModel';
 import { User } from '../models/userModel';
 import logger from '../utils/logger';
 import s3 from '../config/awsConfig';
-import pdfParse from 'pdf-parse';
-import PDFDocument from 'pdfkit';
 import { HydratedDocument } from 'mongoose';
-import path from 'path';
 import mongoose from 'mongoose';
 import { updateUserStats } from './userService';
 import RedisService from './redisService';
-
+import { PDFService } from './pdfService';
 
 export const uploadFileToS3 = async (userId: string, caseId: string, file: Express.Multer.File): Promise<string> => {
     const params = {
@@ -40,8 +37,8 @@ export const createCaseWithFile = async (
     try {
         const fileUrl = await uploadFileToS3(userId, Date.now().toString(), file);
         
-        const pdfData = await pdfParse(file.buffer);
-        const cleanedText = cleanPdfText(pdfData.text);
+        const cleanedText = await PDFService.parsePdf(file.buffer);
+
 
         const newCase = await Case.create({
             userId,
@@ -100,54 +97,6 @@ export const getCasesByUserId = async (userId: string) => {
     }
 };
 
-const cleanPdfText = (text: string): string => {
-    return text
-        .replace(/\n/g, ' ')
-        .replace(/\s\s+/g, ' ')
-        .trim();
-};
-
-const createSummaryPDF = async (summary: string, caseId: string): Promise<Buffer> => {
-    return new Promise((resolve, reject) => {
-        try {
-            const doc = new PDFDocument({
-                size: 'A4',
-                margins: {
-                    top: 50,
-                    bottom: 50,
-                    left: 50,
-                    right: 50
-                }
-            });
-            const chunks: Buffer[] = [];
-
-            doc.on('data', (chunk) => chunks.push(chunk));
-            doc.on('end', () => resolve(Buffer.concat(chunks)));
-
-            doc.registerFont('CustomFont', path.join(__dirname, '../assets/fonts/Roboto-Regular.ttf'));
-            doc.font('CustomFont');
-
-            doc.fontSize(16).text('Belge Özeti', {
-                align: 'center',
-                width: doc.page.width - 100
-            });
-            
-            doc.moveDown(2);
-
-            doc.fontSize(12).text(summary, {
-                align: 'justify',
-                width: doc.page.width - 100,
-                lineGap: 5,
-                indent: 20,  
-            });
-            
-            doc.end();
-        } catch (error) {
-            reject(error);
-        }
-    });
-};
-
 const uploadSummaryToS3 = async (pdfBuffer: Buffer, caseId: string): Promise<string> => {
     const key = `summaries/${caseId}/summary.pdf`;
     
@@ -175,7 +124,8 @@ export const saveSummaryWithPDF = async (caseId: string, summary: string): Promi
         const processingTime = Date.now() - startTime;
         const compressionRatio = originalLength > 0 ? ((originalLength - summaryLength) / originalLength) * 100 : 0;
 
-        const pdfBuffer = await createSummaryPDF(summary, caseId);
+        // PDF özet dosyası PDFService ile oluşturuluyor
+        const pdfBuffer = await PDFService.createSummaryPDF(summary);
         const summaryFileUrl = await uploadSummaryToS3(pdfBuffer, caseId);
 
         await Case.findByIdAndUpdate(caseId, {
