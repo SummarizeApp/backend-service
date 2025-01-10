@@ -14,6 +14,7 @@ export interface IUser extends Document {
     connactNumber?: string;
     cases: mongoose.Types.ObjectId[];
     isVerified: boolean;
+    profileImageUrl?: string | null;
     resetToken?: string;
     resetTokenExpires?: Date;
     stats: {
@@ -36,6 +37,10 @@ const userSchema: Schema = new Schema({
     isVerified: {
         type: Boolean,
         default: false
+    },
+    profileImageUrl: {
+        type: String,
+        default: null
     },
     resetToken: String,
     resetTokenExpires: Date,
