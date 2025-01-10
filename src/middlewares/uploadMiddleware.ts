@@ -1,19 +1,49 @@
 import multer from 'multer';
+import { Request, Response, NextFunction } from 'express';
+import logger from '../utils/logger';
 
-const storage = multer.memoryStorage();
+// Multer konfigürasyonu
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+  fileFilter: (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    logger.info('Received file:', {
+      originalname: file.originalname,
+      mimetype: file.mimetype
+    });
 
-const fileFilter = (req: any, file: any, cb: any) => {
     if (file.mimetype === 'application/pdf') {
-        cb(null, true);
+      cb(null, true);
     } else {
-        cb(new Error('Only PDF files are allowed'), false);
+      cb(new Error('Sadece PDF dosyaları kabul edilmektedir'));
     }
-};
+  },
+});
 
-const limits = {
-    fileSize: 10 * 1024 * 1024, 
+// Multer hata yönetimi middleware'i
+export const handleMulterError = (err: any, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof multer.MulterError) {
+    logger.error('Multer error:', err);
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({
+        success: false,
+        message: 'Dosya boyutu 10MB\'dan büyük olamaz'
+      });
+    }
+    return res.status(400).json({
+      success: false,
+      message: 'Dosya yükleme hatası'
+    });
+  } else if (err) {
+    logger.error('Upload error:', err);
+    return res.status(400).json({
+      success: false,
+      message: err.message
+    });
+  }
+  next();
 };
-
-const upload = multer({ storage, fileFilter, limits });
 
 export default upload;

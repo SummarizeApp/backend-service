@@ -40,4 +40,11 @@ export class ApiResponse{
     static internalServerError(res: Response, msg: string, errors?: any): Response<IResponse<null>> {
         return this.error(res, msg, 500, errors);
     }
+
+    static forbidden(res: Response, message: string) {
+        return res.status(403).json({
+            success: false,
+            message
+        });
+    }
 }

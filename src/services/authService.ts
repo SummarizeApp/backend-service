@@ -1,10 +1,10 @@
 import { User, IUser } from '../models/userModel';
 import jwt from 'jsonwebtoken';
 import logger from '../utils/logger';
-import { emailService } from './emailService';
-import OTP from '../models/otpModel';
 import { generateOTP } from './otpService';
 import { appConfig } from '../config/appConfig';
+import NotificationClient from './notificationClient';
+import RedisService from './redisService';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'jwt_secret_key';
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh_secret_key';
@@ -38,7 +38,8 @@ export const register = async (
 
     if (unverifiedUser) {
         logger.info(`Found unverified user, deleting old registration: ${email}`);
-        await OTP.deleteMany({ userId: unverifiedUser._id });
+        const redis = RedisService.getInstance();
+        await redis.del(`otp:${unverifiedUser._id}`);
         await unverifiedUser.deleteOne();
     }
 
@@ -65,7 +66,8 @@ export const verifyUserEmail = async (userId: string): Promise<{ accessToken: st
     user.isVerified = true;
     await user.save();
 
-    await emailService.sendWelcomeEmail(user.email, user.username);
+    const notificationClient = NotificationClient.getInstance();
+    await notificationClient.sendWelcomeEmail(user.email, user.username);
 
     return generateTokens(user);
 };
@@ -106,8 +108,25 @@ export const login = async (email: string, password: string): Promise<{ accessTo
 };
 
 export const generateTokens = (user: IUser) => {
-    const accessToken = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '15m' });
-    const refreshToken = jwt.sign({ id: user._id, email: user.email }, JWT_REFRESH_SECRET, { expiresIn: '7d' });
+    const accessToken = jwt.sign(
+        { 
+            id: user._id,
+            email: user.email,
+            role: user.role
+        },
+        JWT_SECRET,
+        { expiresIn: '1h' }
+    );
+
+    const refreshToken = jwt.sign(
+        { 
+            id: user._id,
+            role: user.role
+        },
+        JWT_SECRET,
+        { expiresIn: '7d' }
+    );
+
     return { accessToken, refreshToken };
 };
 
@@ -142,6 +161,9 @@ export const forgotPassword = async (userId: string): Promise<string> => {
         user.resetTokenExpires = new Date(Date.now() + 15 * 60 * 1000); 
         await user.save();
 
+        const notificationClient = NotificationClient.getInstance();
+        await notificationClient.sendPasswordResetEmail(user.email, resetToken);
+
         return resetToken;
     } catch (error) {
         throw error;
@@ -169,6 +191,28 @@ export const resetPassword = async (resetToken: string, newPassword: string): Pr
         await user.save();
 
     } catch (error) {
+        throw error;
+    }
+};
+
+export const sendPasswordResetEmail = async (email: string, resetToken: string): Promise<void> => {
+    try {
+        const notificationClient = NotificationClient.getInstance();
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+        await notificationClient.sendEmail({
+            to: email,
+            subject: 'Password Reset Request',
+            html: `
+                <h1>Password Reset Request</h1>
+                <p>Click the link below to reset your password:</p>
+                <a href="${resetLink}">${resetLink}</a>
+                <p>This link will expire in 1 hour.</p>
+                <p>If you didn't request this, please ignore this email.</p>
+            `
+        });
+    } catch (error) {
+        logger.error('Error sending password reset email:', error);
         throw error;
     }
 };

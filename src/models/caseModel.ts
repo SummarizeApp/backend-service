@@ -58,4 +58,10 @@ const CaseSchema: Schema = new Schema({
     timestamps: true
 });
 
+//Indexes
+CaseSchema.index({ userId: 1, createdAt: -1 });
+CaseSchema.index({ title: 'text', description: 'text' }); 
+CaseSchema.index({ 'stats.compressionRatio': 1 });
+CaseSchema.index({ createdAt: -1 }); 
+
 export const Case = mongoose.model<ICase>('Case', CaseSchema);

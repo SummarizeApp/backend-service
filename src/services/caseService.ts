@@ -1,99 +1,128 @@
 import { Case, ICase } from '../models/caseModel';
 import { User } from '../models/userModel';
 import logger from '../utils/logger';
-import s3 from '../config/awsConfig';
-import pdfParse from 'pdf-parse';
-import PDFDocument from 'pdfkit';
 import { HydratedDocument } from 'mongoose';
-import path from 'path';
 import mongoose from 'mongoose';
 import { updateUserStats } from './userService';
-import { uploadFileToS3, uploadSummaryToS3 } from './s3Service';
+import RedisService from './redisService';
+import { PDFService } from './pdfService';
+import { S3Service } from './s3Service'; 
 
+// CRUD İşlemleri
 export const createCaseWithFile = async (
     userId: string, 
     title: string, 
     description: string, 
     file: Express.Multer.File
 ): Promise<HydratedDocument<ICase>> => {
-    
-    const fileUrl = await uploadFileToS3(userId, Date.now().toString(), file);
-    
-    const pdfData = await pdfParse(file.buffer);
-    const cleanedText = cleanPdfText(pdfData.text);
+    try {
+        const fileUrl = await S3Service.uploadFile(userId, Date.now().toString(), file);
 
-    const newCase = await Case.create({
-        userId,
-        title,
-        description,
-        fileUrl: fileUrl,
-        textContent: cleanedText
-    });
+        const cleanedText = await PDFService.parsePdf(file.buffer);
 
-    await User.findByIdAndUpdate(userId, {
-        $push: { cases: newCase._id },
-    });
 
-    return newCase;
+        const newCase = await Case.create({
+            userId,
+            title,
+            description,
+            fileUrl: fileUrl,
+            textContent: cleanedText
+        });
+
+        await User.findByIdAndUpdate(userId, {
+            $push: { cases: newCase._id },
+        });
+
+        await RedisService.invalidateCaseCache(userId);
+        
+        return newCase;
+    } catch (error) {
+        logger.error('Error in createCaseWithFile:', error);
+        throw error;
+    }
 };
 
+export const getCasesByUserId = async (userId: string) => {
+    try {
+        const cachedCases = await RedisService.getCachedCases(userId);
+        if (cachedCases) {
+            logger.info('Cases fetched from cache');
+            return JSON.parse(cachedCases);
+        }
 
+        const cases = await Case.find({ userId })
+            .select('-textContent')
+            .sort({ createdAt: -1 });
 
-export const getCasesByUserId = async (userId: string): Promise<HydratedDocument<ICase>[]> => {
-    return Case.find({ userId })
+        await RedisService.setCachedCases(userId, cases);
+        
+        logger.info('Cases fetched from database and cached');
+        return cases;
+    } catch (error) {
+        logger.error('Error in getCasesByUserId:', error);
+        throw error;
+    }
+};
+
+export const getCases = async (userId: string) => {
+    return await Case.find({ userId })
         .select('+textContent +summary +fileUrl +summaryFileUrl')
         .sort({ createdAt: -1 });
 };
 
-const cleanPdfText = (text: string): string => {
-    return text
-        .replace(/\n/g, ' ')
-        .replace(/\s\s+/g, ' ')
-        .trim();
-};
+export const deleteCases = async (caseIds: string[], userId: string): Promise<{ 
+    success: string[], 
+    failed: string[] 
+}> => {
+    try {
+        const results = {
+            success: [] as string[],
+            failed: [] as string[]
+        };
 
-const createSummaryPDF = async (summary: string, caseId: string): Promise<Buffer> => {
-    return new Promise((resolve, reject) => {
-        try {
-            const doc = new PDFDocument({
-                size: 'A4',
-                margins: {
-                    top: 50,
-                    bottom: 50,
-                    left: 50,
-                    right: 50
+        for (const caseId of caseIds) {
+            try {
+                const caseToDelete = await Case.findOne({ _id: caseId, userId });
+                
+                if (!caseToDelete) {
+                    results.failed.push(caseId);
+                    continue;
                 }
-            });
-            const chunks: Buffer[] = [];
 
-            doc.on('data', (chunk) => chunks.push(chunk));
-            doc.on('end', () => resolve(Buffer.concat(chunks)));
+                const deletePromises = [];
 
-            doc.registerFont('CustomFont', path.join(__dirname, '../assets/fonts/Roboto-Regular.ttf'));
-            doc.font('CustomFont');
+                if (caseToDelete.fileUrl) {
+                    deletePromises.push(S3Service.deleteFile(caseToDelete.fileUrl));
+                }
 
-            doc.fontSize(16).text('Belge Özeti', {
-                align: 'center',
-                width: doc.page.width - 100
-            });
-            
-            doc.moveDown(2);
+                if (caseToDelete.summaryFileUrl) {
+                    deletePromises.push(S3Service.deleteFile(caseToDelete.summaryFileUrl));
+                }
 
-            doc.fontSize(12).text(summary, {
-                align: 'justify',
-                width: doc.page.width - 100,
-                lineGap: 5,
-                indent: 20,  
-            });
-            
-            doc.end();
-        } catch (error) {
-            reject(error);
+                await Promise.all(deletePromises);
+
+                await User.findByIdAndUpdate(caseToDelete.userId, {
+                    $pull: { cases: caseId }
+                });
+
+                await Case.findByIdAndDelete(caseId);
+                results.success.push(caseId);
+            } catch (error) {
+                logger.error(`Error deleting case ${caseId}:`, error);
+                results.failed.push(caseId);
+            }
         }
-    });
+
+        await RedisService.invalidateCaseCache(userId);
+
+        return results;
+    } catch (error) {
+        logger.error('Error in deleteCases:', error);
+        throw error;
+    }
 };
 
-
+// Dosya İşlemleri
 export const saveSummaryWithPDF = async (caseId: string, summary: string): Promise<void> => {
     try {
         const startTime = Date.now();
@@ -108,8 +137,9 @@ export const saveSummaryWithPDF = async (caseId: string, summary: string): Promi
         const processingTime = Date.now() - startTime;
         const compressionRatio = originalLength > 0 ? ((originalLength - summaryLength) / originalLength) * 100 : 0;
 
-        const pdfBuffer = await createSummaryPDF(summary, caseId);
-        const summaryFileUrl = await uploadSummaryToS3(pdfBuffer, caseId);
+        // PDF özet dosyası PDFService ile oluşturuluyor
+        const pdfBuffer = await PDFService.createSummaryPDF(summary);
+        const summaryFileUrl = await S3Service.uploadSummary(pdfBuffer, caseId);
 
         await Case.findByIdAndUpdate(caseId, {
             summary,
@@ -130,69 +160,7 @@ export const saveSummaryWithPDF = async (caseId: string, summary: string): Promi
     }
 };
 
-export const deleteCases = async (caseIds: string[], userId: string): Promise<{ 
-    success: string[], 
-    failed: string[] 
-}> => {
-    const results = {
-        success: [] as string[],
-        failed: [] as string[]
-    };
-
-    for (const caseId of caseIds) {
-        try {
-            const caseToDelete = await Case.findOne({ _id: caseId, userId });
-            
-            if (!caseToDelete) {
-                results.failed.push(caseId);
-                continue;
-            }
-
-            if (caseToDelete.fileUrl || caseToDelete.summaryFileUrl) {
-                try {
-                    const deletePromises = [];
-
-                    if (caseToDelete.fileUrl) {
-                        const fileKey = caseToDelete.fileUrl.split('.com/')[1];
-                        deletePromises.push(
-                            s3.deleteObject({
-                                Bucket: process.env.AWS_S3_BUCKET_NAME as string,
-                                Key: fileKey
-                            }).promise()
-                        );
-                    }
-
-                    if (caseToDelete.summaryFileUrl) {
-                        const summaryKey = caseToDelete.summaryFileUrl.split('.com/')[1];
-                        deletePromises.push(
-                            s3.deleteObject({
-                                Bucket: process.env.AWS_S3_BUCKET_NAME as string,
-                                Key: summaryKey
-                            }).promise()
-                        );
-                    }
-
-                    await Promise.all(deletePromises);
-                } catch (error) {
-                    logger.error('Error deleting files from S3:', error);
-                }
-            }
-
-            await User.findByIdAndUpdate(caseToDelete.userId, {
-                $pull: { cases: caseId }
-            });
-
-            await Case.findByIdAndDelete(caseId);
-            results.success.push(caseId);
-        } catch (error) {
-            logger.error(`Error deleting case ${caseId}:`, error);
-            results.failed.push(caseId);
-        }
-    }
-
-    return results;
-};
-
+// İstatistiksel İşlemler
 export const getCaseStats = async (userId: string) => {
     const stats = await Case.aggregate([
         { $match: { userId: new mongoose.Types.ObjectId(userId) } },
@@ -235,9 +203,3 @@ export const getCaseStats = async (userId: string) => {
         monthly: monthlyStats
     };
 };
-
-export async function getCases(userId: string) {
-    return await Case.find({ userId })
-        .select('+textContent +summary +fileUrl +summaryFileUrl')
-        .sort({ createdAt: -1 });
-}
