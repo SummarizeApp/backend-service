@@ -108,8 +108,25 @@ export const login = async (email: string, password: string): Promise<{ accessTo
 };
 
 export const generateTokens = (user: IUser) => {
-    const accessToken = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '15m' });
-    const refreshToken = jwt.sign({ id: user._id, email: user.email }, JWT_REFRESH_SECRET, { expiresIn: '7d' });
+    const accessToken = jwt.sign(
+        { 
+            id: user._id,
+            email: user.email,
+            role: user.role
+        },
+        JWT_SECRET,
+        { expiresIn: '1h' }
+    );
+
+    const refreshToken = jwt.sign(
+        { 
+            id: user._id,
+            role: user.role
+        },
+        JWT_SECRET,
+        { expiresIn: '7d' }
+    );
+
     return { accessToken, refreshToken };
 };
 

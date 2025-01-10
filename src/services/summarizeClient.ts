@@ -10,7 +10,7 @@ class SummarizeClientService {
 
         // Circuit Breaker ayarlarını yapıyoruz
         this.breaker = new CircuitBreaker(this.sendTextToFlask.bind(this), {
-            timeout: 5000,            // Maksimum bekleme süresi (5 saniye)
+            timeout: 1000000,            // Maksimum bekleme süresi (5 saniye)
             errorThresholdPercentage: 50,  // Hata oranı %50'yi geçerse devre kesilir
             resetTimeout: 10000       // 10 saniye sonra devreyi tekrar açmayı dener
         });

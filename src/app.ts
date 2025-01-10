@@ -3,6 +3,7 @@ import routes from './routes';
 import { generalLimiter } from './middlewares/rateLimiter';
 import { errorHandler } from './middlewares/errorHandler';
 import { metricsMiddleware, metricsEndpoint } from './middlewares/metricsMiddleware';
+import cors from 'cors';
 
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swaggerConfig';
@@ -11,6 +12,16 @@ import morgan from 'morgan';
 import logger from './utils/logger';
 
 const app: Application = express();
+
+// CORS ayarları
+app.use(cors({
+  origin: ['http://localhost:8080', 'http://admin-dashboard:8080', 'https://*.amazonaws.com'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'Access-Control-Allow-Origin'],
+  exposedHeaders: ['Content-Disposition', 'Content-Type'],
+  credentials: true,
+  maxAge: 86400 // 24 saat
+}));
 
 app.use(morgan('combined', {
     stream: {

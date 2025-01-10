@@ -1,6 +1,11 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+export enum UserRole {
+    USER = 'user',
+    ADMIN = 'admin'
+}
+
 export interface IUser extends Document {
     _id: mongoose.Types.ObjectId;
     email: string;
@@ -19,6 +24,7 @@ export interface IUser extends Document {
         lastUpdateDate: Date;
     };
     comparePassword(candidatePassword: string): Promise<boolean>;
+    role: UserRole;
 }
 
 const userSchema: Schema = new Schema({
@@ -39,6 +45,11 @@ const userSchema: Schema = new Schema({
         totalSummaryLength: { type: Number, default: 0 },
         averageCompressionRatio: { type: Number, default: 0 },
         lastUpdateDate: { type: Date, default: Date.now }
+    },
+    role: {
+        type: String,
+        enum: Object.values(UserRole),
+        default: UserRole.USER
     }
 }, { timestamps: true });
 
