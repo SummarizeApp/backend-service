@@ -3,8 +3,6 @@ import { authenticate } from '../middlewares/authMiddleware';
 import { 
     getUserProfileController, 
     updateUserStatsController ,
-    updateProfileImageController,
-    removeProfileImageController
 } from '../controllers/userController';
 import multer from 'multer';
 
@@ -26,7 +24,5 @@ const upload = multer({
 
 router.get('/profile', authenticate, getUserProfileController);
 router.get('/stats', authenticate, updateUserStatsController);
-router.post('/profile/image', authenticate, upload.single('image'), updateProfileImageController);
-router.delete('/profile/image', authenticate, removeProfileImageController);
 
 export default router;
