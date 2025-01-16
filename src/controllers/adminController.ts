@@ -4,12 +4,7 @@ import { ApiResponse } from '../utils/apiResponse';
 import logger from '../utils/logger';
 import bcrypt from 'bcryptjs';
 import { Case } from '../models/caseModel';
-import axios from 'axios';
 
-interface AIServiceResponse {
-    summary: string;
-    processingTime: number;
-}
 
 export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
     try {

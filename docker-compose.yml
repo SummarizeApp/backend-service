@@ -42,16 +42,16 @@ services:
     volumes:
       - grafana-storage:/var/lib/grafana
       
-  node-exporter:
-    image: prom/node-exporter:latest
-    ports:
-      - "9100:9100"
-    command:
-      - '--path.rootfs=/host'
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/host:ro  
+  # node-exporter:
+  #   image: prom/node-exporter:latest
+  #   ports:
+  #     - "9100:9100"
+  #   command:
+  #     - '--path.rootfs=/host'
+  #   volumes:
+  #     - /proc:/host/proc:ro
+  #     - /sys:/host/sys:ro
+  #     - /:/host:ro  
   
   dcgm-exporter:
     image: nvidia/dcgm-exporter:latest

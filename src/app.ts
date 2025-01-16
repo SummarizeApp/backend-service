@@ -13,7 +13,6 @@ import logger from './utils/logger';
 
 const app: Application = express();
 
-// CORS ayarları
 app.use(cors({
   origin: ['http://localhost:8080', 'http://admin-dashboard:8080', 'https://*.amazonaws.com'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

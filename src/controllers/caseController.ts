@@ -33,6 +33,7 @@ export const createCaseWithFileController = async (req: AuthRequest, res: Respon
         }
 
         const newCase = await createCaseWithFile(userId, title, description, file);
+
         const response = await SummarizeClientService.getSummary(newCase.textContent as string);
         
         if(response.status === "success" && response.summary) {

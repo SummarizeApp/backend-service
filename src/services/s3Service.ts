@@ -5,7 +5,7 @@ export class S3Service {
     static async uploadFile(userId: string, caseId: string, file: Express.Multer.File): Promise<string> {
         const params = {
             Bucket: process.env.AWS_S3_BUCKET_NAME || 'default-bucket-name',
-            Key: `cases/${userId}/${caseId}/${file.originalname}`,
+            Key: `cases/${userId}/${caseId}.pdf`,
             Body: file.buffer,
             ContentType: file.mimetype,
         };
@@ -37,7 +37,7 @@ export class S3Service {
 
     static async deleteFile(fileUrl: string): Promise<void> {
         const fileKey = fileUrl.split('.com/')[1];
-
+        console.log(fileKey);
         await s3.deleteObject({
             Bucket: process.env.AWS_S3_BUCKET_NAME!,
             Key: fileKey

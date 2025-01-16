@@ -92,10 +92,12 @@ export const deleteCases = async (caseIds: string[], userId: string): Promise<{
                 const deletePromises = [];
 
                 if (caseToDelete.fileUrl) {
+                    console.log(caseToDelete.fileUrl);
                     deletePromises.push(S3Service.deleteFile(caseToDelete.fileUrl));
                 }
 
                 if (caseToDelete.summaryFileUrl) {
+                    console.log(caseToDelete.summaryFileUrl);
                     deletePromises.push(S3Service.deleteFile(caseToDelete.summaryFileUrl));
                 }
 
@@ -139,6 +141,8 @@ export const saveSummaryWithPDF = async (caseId: string, summary: string): Promi
 
         // PDF özet dosyası PDFService ile oluşturuluyor
         const pdfBuffer = await PDFService.createSummaryPDF(summary);
+
+        
         const summaryFileUrl = await S3Service.uploadSummary(pdfBuffer, caseId);
 
         await Case.findByIdAndUpdate(caseId, {
