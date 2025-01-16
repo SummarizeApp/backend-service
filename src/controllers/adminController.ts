@@ -4,7 +4,7 @@ import { ApiResponse } from '../utils/apiResponse';
 import logger from '../utils/logger';
 import bcrypt from 'bcryptjs';
 import { Case } from '../models/caseModel';
-
+import { deleteUser as deleteUserService } from '../services/userService';
 
 export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -106,7 +106,7 @@ export const getDashboardStats = async (req: Request, res: Response): Promise<vo
 export const deleteUser = async (req: Request, res: Response): Promise<void> => {
     try {
         const { userId } = req.params;
-        await User.findByIdAndDelete(userId);
+        await deleteUserService(userId)
         ApiResponse.success(res, 'User deleted successfully');
     } catch (error) {
         logger.error('Error in deleteUser:', error);

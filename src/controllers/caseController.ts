@@ -12,6 +12,7 @@ import {
 import SummarizeClientService from '../services/summarizeClient';
 import { Case } from '../models/caseModel';
 import { S3Service } from '../services/s3Service'; 
+import { getUserProfile } from '../services/userService';
 
 interface AuthRequest extends Request {
     user?: string | JwtPayload; 
@@ -24,6 +25,13 @@ export const createCaseWithFileController = async (req: AuthRequest, res: Respon
             return;
         }
         const userId = (req.user as JwtPayload).id || req.user;
+        
+        const user = await getUserProfile(userId);
+        if (!user) {
+            ApiResponse.notFound(res, 'User not found');
+            return;
+        }
+
         const { title, description } = req.body;
         const file = req.file;
 
@@ -95,6 +103,13 @@ export const deleteCasesController = async (req: AuthRequest, res: Response): Pr
         }
 
         const userId = (req.user as JwtPayload).id || req.user;
+
+        const user = await getUserProfile(userId);
+        if (!user) {
+            ApiResponse.notFound(res, 'User not found');
+            return;
+        }
+
         const { caseIds } = req.body;
 
         if (!Array.isArray(caseIds) || !caseIds.length) {
@@ -121,6 +136,12 @@ export const getCaseStatsController = async (req: AuthRequest, res: Response): P
             return;
         }
         const userId = (req.user as JwtPayload).id || req.user;
+
+        const user = await getUserProfile(userId);
+        if (!user) {
+            ApiResponse.notFound(res, 'User not found');
+            return;
+        }
         
         const stats = await getCaseStats(userId);
         ApiResponse.success(res, 'Case statistics fetched successfully', stats);

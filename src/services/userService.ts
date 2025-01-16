@@ -1,6 +1,8 @@
 import { User } from '../models/userModel';
 import { Case } from '../models/caseModel';
 import logger from '../utils/logger';
+import { S3Service } from './s3Service';
+import RedisService from './redisService';
 
 export const getUserProfile = async (userId: string) => {
     const user = await User.findById(userId)
@@ -47,6 +49,38 @@ export const updateUserStats = async (userId: string): Promise<void> => {
         });
     } catch (error) {
         logger.error('Error updating user stats:', error);
+        throw error;
+    }
+};
+
+export const deleteUser = async (userId: string): Promise<void> => {
+    try {
+        const cases = await Case.find({ userId });
+        
+        for (const caseDoc of cases) {
+            const deletePromises = [];
+
+            if (caseDoc.fileUrl) {
+                deletePromises.push(S3Service.deleteFile(caseDoc.fileUrl));
+            }
+
+            if (caseDoc.summaryFileUrl) {
+                deletePromises.push(S3Service.deleteFile(caseDoc.summaryFileUrl));
+            }
+
+            await Promise.all(deletePromises);
+        }
+
+        await Case.deleteMany({ userId });
+
+        await User.findByIdAndDelete(userId);
+
+        await RedisService.invalidateCaseCache(userId);
+        await RedisService.invalidateProfileCache(userId);
+
+        logger.info(`User ${userId} and all associated data deleted successfully`);
+    } catch (error) {
+        logger.error('Error in deleteUser:', error);
         throw error;
     }
 };

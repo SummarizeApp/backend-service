@@ -3,7 +3,7 @@ import { ApiResponse } from '../utils/apiResponse';
 
 export const generalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, 
-    max: 100, 
+    max: 1000, 
     message: {
         status: 'error',
         msg: 'Too many requests, please try again later',
@@ -17,7 +17,7 @@ export const generalLimiter = rateLimit({
 
 export const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 10, 
+    max: 100, 
     message: {
         status: 'error',
         msg: 'Too many requests to auth endpoints, please try again later',
